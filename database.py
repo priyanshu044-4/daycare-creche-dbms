@@ -131,21 +131,23 @@ def init_sqlite(force_recreate=False):
     conn.execute("PRAGMA foreign_keys = ON;")
     cursor = conn.cursor()
 
-    # Tables DDL
+    # Tables DDL for Home-Based Creche
     cursor.executescript("""
+    -- 1. Home Care Spaces (Nursery Nook, Play Den, Activity Veranda, Play Yard)
     CREATE TABLE IF NOT EXISTS rooms (
         room_id INTEGER PRIMARY KEY AUTOINCREMENT,
         room_name TEXT NOT NULL UNIQUE,
         age_group TEXT NOT NULL,
         capacity INTEGER NOT NULL CHECK(capacity > 0),
-        room_type TEXT DEFAULT 'Classroom'
+        room_type TEXT DEFAULT 'Home Living Area'
     );
 
+    -- 2. Caregivers & Helpers (Creche Host, Care Assistant / Didi, Home Cook, Visiting Nurse)
     CREATE TABLE IF NOT EXISTS staff (
         staff_id INTEGER PRIMARY KEY AUTOINCREMENT,
         first_name TEXT NOT NULL,
         last_name TEXT NOT NULL,
-        role TEXT NOT NULL CHECK(role IN ('Administrator', 'Lead Educator', 'Caregiver', 'Nurse', 'Cook')),
+        role TEXT NOT NULL CHECK(role IN ('Creche Host', 'Care Assistant', 'Visiting Nurse', 'Home Cook', 'Lead Educator', 'Caregiver')),
         phone TEXT NOT NULL,
         email TEXT UNIQUE,
         qualification TEXT,
@@ -154,6 +156,7 @@ def init_sqlite(force_recreate=False):
         salary REAL CHECK(salary >= 0)
     );
 
+    -- 3. Children (Enrolled in Home Creche)
     CREATE TABLE IF NOT EXISTS children (
         child_id INTEGER PRIMARY KEY AUTOINCREMENT,
         first_name TEXT NOT NULL,
@@ -168,6 +171,7 @@ def init_sqlite(force_recreate=False):
         notes TEXT
     );
 
+    -- 4. Guardians / Parents
     CREATE TABLE IF NOT EXISTS guardians (
         guardian_id INTEGER PRIMARY KEY AUTOINCREMENT,
         first_name TEXT NOT NULL,
@@ -179,6 +183,7 @@ def init_sqlite(force_recreate=False):
         occupation TEXT
     );
 
+    -- 5. Child-Guardian Linkage (Many-to-Many with pickup authorization)
     CREATE TABLE IF NOT EXISTS child_guardians (
         child_id INTEGER NOT NULL REFERENCES children(child_id) ON DELETE CASCADE,
         guardian_id INTEGER NOT NULL REFERENCES guardians(guardian_id) ON DELETE CASCADE,
@@ -187,6 +192,7 @@ def init_sqlite(force_recreate=False):
         PRIMARY KEY (child_id, guardian_id)
     );
 
+    -- 6. Allergies & Home Care Protocols
     CREATE TABLE IF NOT EXISTS allergies_medical (
         allergy_id INTEGER PRIMARY KEY AUTOINCREMENT,
         child_id INTEGER NOT NULL REFERENCES children(child_id) ON DELETE CASCADE,
@@ -196,6 +202,7 @@ def init_sqlite(force_recreate=False):
         action_plan TEXT
     );
 
+    -- 7. Daily Attendance & Check-in / Check-out
     CREATE TABLE IF NOT EXISTS attendance (
         attendance_id INTEGER PRIMARY KEY AUTOINCREMENT,
         child_id INTEGER NOT NULL REFERENCES children(child_id) ON DELETE CASCADE,
@@ -209,6 +216,7 @@ def init_sqlite(force_recreate=False):
         UNIQUE(child_id, attendance_date)
     );
 
+    -- 8. Daily Home Activities (Home-cooked meals, nap times, story circles, potty tracking)
     CREATE TABLE IF NOT EXISTS daily_activities (
         activity_id INTEGER PRIMARY KEY AUTOINCREMENT,
         child_id INTEGER NOT NULL REFERENCES children(child_id) ON DELETE CASCADE,
@@ -220,6 +228,7 @@ def init_sqlite(force_recreate=False):
         staff_id INTEGER REFERENCES staff(staff_id) ON DELETE SET NULL
     );
 
+    -- 9. Home Creche Fee Plans
     CREATE TABLE IF NOT EXISTS fee_plans (
         plan_id INTEGER PRIMARY KEY AUTOINCREMENT,
         plan_name TEXT NOT NULL UNIQUE,
@@ -228,6 +237,7 @@ def init_sqlite(force_recreate=False):
         amount REAL NOT NULL CHECK(amount > 0)
     );
 
+    -- 10. Invoices (Care Invoices)
     CREATE TABLE IF NOT EXISTS invoices (
         invoice_id INTEGER PRIMARY KEY AUTOINCREMENT,
         child_id INTEGER NOT NULL REFERENCES children(child_id) ON DELETE RESTRICT,
@@ -241,6 +251,7 @@ def init_sqlite(force_recreate=False):
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
+    -- 11. Payments (Ledger)
     CREATE TABLE IF NOT EXISTS payments (
         payment_id INTEGER PRIMARY KEY AUTOINCREMENT,
         invoice_id INTEGER NOT NULL REFERENCES invoices(invoice_id) ON DELETE CASCADE,
@@ -252,6 +263,7 @@ def init_sqlite(force_recreate=False):
         recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
+    -- 12. Audit Logs (Trigger trail)
     CREATE TABLE IF NOT EXISTS audit_logs (
         log_id INTEGER PRIMARY KEY AUTOINCREMENT,
         action_type TEXT NOT NULL,
@@ -270,7 +282,7 @@ def init_sqlite(force_recreate=False):
     BEGIN
         INSERT INTO audit_logs (action_type, table_name, record_id, details)
         VALUES ('INSERT', 'children', NEW.child_id, 
-                'Enrolled child: ' || NEW.first_name || ' ' || NEW.last_name || ' into Room ID ' || NEW.room_id);
+                'Enrolled child: ' || NEW.first_name || ' ' || NEW.last_name || ' into Home Care Area ' || NEW.room_id);
     END;
 
     DROP TRIGGER IF EXISTS trg_child_audit_update;
@@ -279,7 +291,7 @@ def init_sqlite(force_recreate=False):
     BEGIN
         INSERT INTO audit_logs (action_type, table_name, record_id, details)
         VALUES ('UPDATE', 'children', NEW.child_id, 
-                'Updated child record. Status: ' || NEW.status || ', Room: ' || NEW.room_id);
+                'Updated child record. Status: ' || NEW.status || ', Care Area: ' || NEW.room_id);
     END;
 
     DROP TRIGGER IF EXISTS trg_payment_update_invoice;
@@ -307,7 +319,7 @@ def init_sqlite(force_recreate=False):
         WHERE room_id = NEW.room_id AND status = 'Active'
     ) >= (SELECT capacity FROM rooms WHERE room_id = NEW.room_id)
     BEGIN
-        SELECT RAISE(ABORT, 'Cannot enroll child: Target classroom has reached its maximum sanctioned capacity!');
+        SELECT RAISE(ABORT, 'Cannot enroll child: Target home care space has reached maximum cozy capacity!');
     END;
     """)
 
@@ -347,13 +359,13 @@ def init_sqlite(force_recreate=False):
         r.age_group,
         r.capacity,
         r.room_type,
-        COUNT(c.child_id) AS current_enrolled,
-        (r.capacity - COUNT(c.child_id)) AS available_slots,
-        ROUND((COUNT(c.child_id) * 100.0 / r.capacity), 1) AS occupancy_percentage,
+        COUNT(DISTINCT c.child_id) AS current_enrolled,
+        (r.capacity - COUNT(DISTINCT c.child_id)) AS available_slots,
+        ROUND((COUNT(DISTINCT c.child_id) * 100.0 / r.capacity), 1) AS occupancy_percentage,
         COALESCE(s.first_name || ' ' || s.last_name, 'Unassigned') AS lead_educator
     FROM rooms r
     LEFT JOIN children c ON r.room_id = c.room_id AND c.status = 'Active'
-    LEFT JOIN staff s ON r.room_id = s.assigned_room_id AND s.role = 'Lead Educator'
+    LEFT JOIN staff s ON r.room_id = s.assigned_room_id
     GROUP BY r.room_id;
 
     DROP VIEW IF EXISTS view_pending_dues;
@@ -408,7 +420,7 @@ def init_sqlite(force_recreate=False):
         c.child_id,
         c.first_name || ' ' || c.last_name AS child_name,
         r.room_name,
-        COALESCE(s.first_name || ' ' || s.last_name, 'Staff') AS logged_by
+        COALESCE(s.first_name || ' ' || s.last_name, 'Creche Helper') AS logged_by
     FROM daily_activities da
     JOIN children c ON da.child_id = c.child_id
     JOIN rooms r ON c.room_id = r.room_id
@@ -453,30 +465,28 @@ def seed_sqlite():
         conn.close()
         return
 
-    # 1. Rooms (Theme 5: Modern Montessori & Nordic Style)
+    # 1. Home Creche Spaces (Cozy Residential Home Setup)
     cursor.executemany("INSERT INTO rooms (room_name, age_group, capacity, room_type) VALUES (?, ?, ?, ?)", [
-        ('The Nest', '0-12 months', 8, 'Infant Nursery'),
-        ('The Burrow', '1-2 years', 12, 'Toddler Sensory Playroom'),
-        ('The Hive', '2-3.5 years', 15, 'Collaborative Learning Pod'),
-        ('The Discovery Lab', '3.5-5 years', 18, 'Kindergarten Activity Lab')
+        ('Nursery Nook', '0-12 months', 4, 'Crib & Feeding Room'),
+        ('Toddler Play Den', '1-2 years', 6, 'Soft Floor Play Living Area'),
+        ('Activity Veranda', '2-3.5 years', 6, 'Dining & Story Space'),
+        ('Sunshine Backyard Yard', '3.5-5 years', 6, 'Safe Lawn & Motor Play')
     ])
 
-    # 2. Staff (Indian Educators, Nurse & Caregivers)
+    # 2. Staff (Creche Mother, Assistants, Visiting Doctor/Nurse, Home Cook)
     cursor.executemany("""
     INSERT INTO staff (first_name, last_name, role, phone, email, qualification, assigned_room_id, hire_date, salary)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, [
-        ('Sunita', 'Deshmukh', 'Administrator', '9820112233', 'sunita.admin@earlyroots.in', 'M.Ed Early Childhood Education', None, '2022-01-15', 55000),
-        ('Anita', 'Menon', 'Lead Educator', '9820112234', 'anita.m@earlyroots.in', 'B.Ed & Montessori Certified', 1, '2022-03-01', 42000),
-        ('Rajeshwari', 'Pillai', 'Lead Educator', '9820112235', 'rajeshwari.p@earlyroots.in', 'Diploma in Child Psychology', 2, '2022-06-10', 40000),
-        ('Meenakshi', 'Sundaram', 'Lead Educator', '9820112236', 'meenakshi.s@earlyroots.in', 'B.Sc Child Development', 3, '2023-01-10', 41000),
-        ('Farhan', 'Akhtar', 'Lead Educator', '9820112237', 'farhan.a@earlyroots.in', 'B.A Primary Education', 4, '2023-04-15', 39000),
-        ('Sister Mary', 'Joseph', 'Nurse', '9820112238', 'mary.nurse@earlyroots.in', 'Registered Pediatric Nurse (B.Sc Nursing)', None, '2022-08-01', 45000),
-        ('Lakshmi', 'Bai', 'Caregiver', '9820112239', 'lakshmi.b@earlyroots.in', 'Certified Child Care Attendant', 2, '2023-09-01', 30000),
-        ('Geeta', 'Devi', 'Caregiver', '9820112240', 'geeta.d@earlyroots.in', 'CPR & First Aid Certified', 1, '2023-11-15', 30000)
+        ('Sunita', 'Deshmukh', 'Creche Host', '9820112233', 'sunita.aunty@earlyroots.in', 'Home Creche Founder & Certified Nanny', 1, '2022-01-15', 50000),
+        ('Anita', 'Menon', 'Care Assistant', '9820112234', 'anita.m@earlyroots.in', 'Early Child Care Certificate', 2, '2022-03-01', 28000),
+        ('Lakshmi', 'Bai', 'Care Assistant', '9820112239', 'lakshmi.didi@earlyroots.in', 'Loving Attendant & First Aid Trained', 1, '2023-09-01', 22000),
+        ('Geeta', 'Devi', 'Care Assistant', '9820112240', 'geeta.didi@earlyroots.in', 'Child Caretaker & Activity Helper', 3, '2023-11-15', 22000),
+        ('Sister Mary', 'Joseph', 'Visiting Nurse', '9820112238', 'mary.nurse@earlyroots.in', 'Visiting Pediatric Nurse (Weekly Health Check)', None, '2022-08-01', 25000),
+        ('Parvati', 'Devi', 'Home Cook', '9820112241', 'parvati.cook@earlyroots.in', 'Specialist in Nutritious Baby & Toddler Meals', None, '2022-05-01', 20000)
     ])
 
-    # 3. Guardians (Indian Parents & Metro Addresses)
+    # 3. Guardians (Neighbourhood Parents & Contacts)
     cursor.executemany("""
     INSERT INTO guardians (first_name, last_name, relationship, phone, email, address, occupation)
     VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -493,21 +503,21 @@ def seed_sqlite():
         ('Deepa', 'Gupta', 'Mother', '9811223310', 'deepa.gupta@gmail.com', 'B-4, Vasant Kunj, New Delhi', 'High Court Advocate')
     ])
 
-    # 4. Children (Indian First & Last Names)
+    # 4. Children (Intimate Home Creche Group)
     cursor.executemany("""
     INSERT INTO children (first_name, last_name, dob, gender, blood_group, room_id, enrollment_date, status, emergency_contact_phone, notes)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, [
-        ('Aarav', 'Sharma', '2026-03-15', 'Male', 'O+', 1, '2026-06-01', 'Active', '9811223301', 'Needs soft lullaby before nap time'),
-        ('Ananya', 'Sharma', '2024-05-20', 'Female', 'O+', 3, '2025-01-10', 'Active', '9811223301', 'Very cheerful, loves coloring rangoli patterns'),
+        ('Aarav', 'Sharma', '2026-03-15', 'Male', 'O+', 1, '2026-06-01', 'Active', '9811223301', 'Prefers rocking crib with baby rattle'),
+        ('Ananya', 'Sharma', '2024-05-20', 'Female', 'O+', 3, '2025-01-10', 'Active', '9811223301', 'Very cheerful, loves coloring with Auntie'),
         ('Vihaan', 'Verma', '2025-08-11', 'Male', 'B+', 2, '2026-02-01', 'Active', '9811223303', 'Fascinated by wooden puzzle blocks'),
-        ('Isha', 'Verma', '2023-11-04', 'Female', 'A+', 4, '2024-07-15', 'Active', '9811223304', 'Enjoys Panchatantra story sessions'),
-        ('Advait', 'Patel', '2026-01-10', 'Male', 'A-', 1, '2026-04-01', 'Active', '9811223305', 'Formula fed every 3 hours as per schedule'),
-        ('Diya', 'Iyer', '2025-02-14', 'Female', 'B-', 2, '2025-09-01', 'Active', '9811223306', 'Sensitive to sudden loud claps or noise'),
-        ('Kabir', 'Reddy', '2024-10-30', 'Male', 'AB+', 3, '2025-04-10', 'Active', '9811223307', 'Enjoys stacking clay cups and blocks'),
+        ('Isha', 'Verma', '2023-11-04', 'Female', 'A+', 4, '2024-07-15', 'Active', '9811223304', 'Enjoys evening story sessions on the porch'),
+        ('Advait', 'Patel', '2026-01-10', 'Male', 'A-', 1, '2026-04-01', 'Active', '9811223305', 'Formula fed every 3 hours as per mother notes'),
+        ('Diya', 'Iyer', '2025-02-14', 'Female', 'B-', 2, '2025-09-01', 'Active', '9811223306', 'Sensitive to sudden noises; likes soft chimes'),
+        ('Kabir', 'Reddy', '2024-10-30', 'Male', 'AB+', 3, '2025-04-10', 'Active', '9811223307', 'Enjoys stacking clay cups and building houses'),
         ('Meera', 'Sen', '2026-05-18', 'Female', 'AB+', 1, '2026-08-01', 'Active', '9811223308', 'Takes small teething ring before afternoon rest'),
-        ('Reyansh', 'Nair', '2023-09-12', 'Male', 'O-', 4, '2024-03-01', 'Active', '9811223309', 'Loves rhymes and outdoor slide'),
-        ('Saanvi', 'Gupta', '2025-04-22', 'Female', 'A+', 2, '2025-11-01', 'Active', '9811223310', 'Grandparents authorized for evening pickup')
+        ('Reyansh', 'Nair', '2023-09-12', 'Male', 'O-', 4, '2024-03-01', 'Active', '9811223309', 'Loves lawn slide and playing ball with caregiver'),
+        ('Saanvi', 'Gupta', '2025-04-22', 'Female', 'A+', 2, '2025-11-01', 'Active', '9811223310', 'Grandparents authorized for 6 PM pickup')
     ])
 
     # 5. Child-Guardian Relationships
@@ -527,28 +537,28 @@ def seed_sqlite():
         (10, 10, 1, 1)
     ])
 
-    # 6. Allergies & Medical Notes
+    # 6. Allergies & Medical Care Notes
     cursor.executemany("""
     INSERT INTO allergies_medical (child_id, allergen_type, allergen_name, severity, action_plan)
     VALUES (?, ?, ?, ?, ?)
     """, [
-        (1, 'Food', 'Cow Milk Protein (Lactose)', 'Moderate', 'Use soy/almond milk formula strictly'),
-        (2, 'Food', 'Peanuts & Tree Nuts', 'Severe', 'Keep EpiPen handy, call Apollo emergency'),
-        (3, 'Environmental', 'Dust Mites & Pollen', 'Mild', 'Keep play mat clean, administer cetirizine syrup if sneezing'),
-        (6, 'Food', 'Egg Albumin', 'Severe', 'Strict egg-free diet, notify creche kitchen cook'),
-        (7, 'Medicine', 'Penicillin & Amoxicillin', 'Severe', 'Medical alert band worn; inform attending doctor immediately'),
-        (9, 'Food', 'Gluten / Wheat', 'Moderate', 'Provide gluten-free ragi or rice snacks and khichdi')
+        (1, 'Food', 'Cow Milk Protein (Lactose)', 'Moderate', 'Use soy/almond milk formula prepared separately in home kitchen'),
+        (2, 'Food', 'Peanuts & Tree Nuts', 'Severe', 'Strict nut-free snacks; keep EpiPen in first-aid shelf'),
+        (3, 'Environmental', 'Dust Mites & Pollen', 'Mild', 'Keep play mat vacuumed; give prescribed cetirizine syrup if sneezing'),
+        (6, 'Food', 'Egg Albumin', 'Severe', 'Pure vegetarian home food only; notify home cook Parvati'),
+        (7, 'Medicine', 'Penicillin & Amoxicillin', 'Severe', 'Medical alert band worn; call visiting doctor immediately if sick'),
+        (9, 'Food', 'Gluten / Wheat', 'Moderate', 'Provide homemade gluten-free ragi or rice khichdi')
     ])
 
-    # 7. Fee Plans (in INR ₹)
+    # 7. Home Creche Care Fee Plans (in INR ₹)
     cursor.executemany("""
     INSERT INTO fee_plans (plan_name, description, frequency, amount)
     VALUES (?, ?, ?, ?)
     """, [
-        ('The Nest Full-Day Infant Care', 'Full daycare with nutrition, warm oil massage, diapering, and nap logs (8am-6pm)', 'Monthly', 14500.0),
-        ('The Burrow Toddler Playgroup', 'Structured motor skills, sensory play, fresh hot lunch, and nap (8am-5pm)', 'Monthly', 11500.0),
-        ('The Hive Half-Day Program', 'Morning early learning, music, and socialization (8:30am-12:30pm)', 'Monthly', 7500.0),
-        ('The Discovery Lab Extended Day', 'School readiness curriculum with evening activity club (8am-6pm)', 'Monthly', 12500.0)
+        ('Full-Day Home Creche (8am - 6pm)', 'Complete day stay: 3 home-cooked meals, warm sponge, nap time, and developmental play', 'Monthly', 12500.0),
+        ('Half-Day Home Stay (8am - 1pm)', 'Morning playgroup, rhymes, homemade breakfast, and lunch with Sunita Auntie', 'Monthly', 7500.0),
+        ('After-School Home Care (1pm - 6pm)', 'Homely lunch, resting nap, homework support, and evening milk & snacks', 'Monthly', 6500.0),
+        ('Flexible Care & Play (Hourly / Drop-In)', 'Drop-in home care with playtime, meals, and sibling care', 'Monthly', 9000.0)
     ])
 
     # 8. Invoices (in INR ₹)
@@ -557,62 +567,62 @@ def seed_sqlite():
     INSERT INTO invoices (child_id, plan_id, billing_period, total_amount, discount_amount, net_amount, due_date, status)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     """, [
-        (1, 1, today_ym, 14500.0, 0.0, 14500.0, '2026-11-28', 'Paid'),
-        (2, 3, today_ym, 7500.0, 500.0, 7000.0, '2026-11-28', 'Paid'),
-        (3, 2, today_ym, 11500.0, 0.0, 11500.0, '2026-11-28', 'Partially Paid'),
-        (4, 4, today_ym, 12500.0, 0.0, 12500.0, '2026-11-20', 'Overdue'),
-        (5, 1, today_ym, 14500.0, 0.0, 14500.0, '2026-11-28', 'Paid'),
-        (6, 2, today_ym, 11500.0, 0.0, 11500.0, '2026-11-25', 'Pending'),
-        (7, 3, today_ym, 7500.0, 0.0, 7500.0, '2026-11-28', 'Pending'),
-        (8, 1, today_ym, 14500.0, 1000.0, 13500.0, '2026-11-28', 'Paid'),
-        (9, 4, today_ym, 12500.0, 0.0, 12500.0, '2026-11-15', 'Overdue'),
-        (10, 2, today_ym, 11500.0, 0.0, 11500.0, '2026-11-28', 'Paid')
+        (1, 1, today_ym, 12500.0, 0.0, 12500.0, '2026-11-28', 'Paid'),
+        (2, 2, today_ym, 7500.0, 500.0, 7000.0, '2026-11-28', 'Paid'),
+        (3, 2, today_ym, 7500.0, 0.0, 7500.0, '2026-11-28', 'Partially Paid'),
+        (4, 3, today_ym, 6500.0, 0.0, 6500.0, '2026-11-20', 'Overdue'),
+        (5, 1, today_ym, 12500.0, 0.0, 12500.0, '2026-11-28', 'Paid'),
+        (6, 2, today_ym, 7500.0, 0.0, 7500.0, '2026-11-25', 'Pending'),
+        (7, 2, today_ym, 7500.0, 0.0, 7500.0, '2026-11-28', 'Pending'),
+        (8, 1, today_ym, 12500.0, 1000.0, 11500.0, '2026-11-28', 'Paid'),
+        (9, 3, today_ym, 6500.0, 0.0, 6500.0, '2026-11-15', 'Overdue'),
+        (10, 2, today_ym, 7500.0, 0.0, 7500.0, '2026-11-28', 'Paid')
     ])
 
-    # 9. Payments (UPI / NetBanking / Cards in ₹)
+    # 9. Payments
     cursor.executemany("""
     INSERT INTO payments (invoice_id, amount_paid, payment_date, payment_mode, transaction_ref, receipt_number)
     VALUES (?, ?, ?, ?, ?, ?)
     """, [
-        (1, 14500.0, '2026-11-02', 'UPI', 'UPI/2026/GPay/98123', 'REC-001'),
+        (1, 12500.0, '2026-11-02', 'UPI', 'UPI/2026/GPay/98123', 'REC-001'),
         (2, 7000.0, '2026-11-03', 'UPI', 'UPI/2026/PhonePe/77612', 'REC-002'),
-        (3, 6000.0, '2026-11-04', 'NetBanking', 'HDFC-IMPS-88412', 'REC-003'),
-        (5, 14500.0, '2026-11-05', 'UPI', 'UPI/2026/Paytm/33120', 'REC-004'),
-        (8, 13500.0, '2026-11-02', 'Card', 'TXN-ICICI-77112', 'REC-005'),
-        (10, 11500.0, '2026-11-06', 'Cash', 'CASH-REC-101', 'REC-006')
+        (3, 4000.0, '2026-11-04', 'NetBanking', 'HDFC-IMPS-88412', 'REC-003'),
+        (5, 12500.0, '2026-11-05', 'UPI', 'UPI/2026/Paytm/33120', 'REC-004'),
+        (8, 11500.0, '2026-11-02', 'Card', 'TXN-ICICI-77112', 'REC-005'),
+        (10, 7500.0, '2026-11-06', 'Cash', 'CASH-REC-101', 'REC-006')
     ])
 
-    # 10. Attendance Today
+    # 10. Daily Attendance
     today_str = date.today().isoformat()
     cursor.executemany("""
     INSERT INTO attendance (child_id, attendance_date, check_in_time, check_out_time, status, temperature_f, checked_in_by_staff_id, remarks)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     """, [
-        (1, today_str, '08:15', None, 'Present', 98.4, 2, 'Arrived cheerfully with mother'),
-        (2, today_str, '08:30', None, 'Present', 98.2, 4, 'Carrying drawing book'),
-        (3, today_str, '08:45', None, 'Present', 98.6, 3, 'Temperature checked, normal'),
-        (4, today_str, None, None, 'Absent', None, 5, 'Family out of station for wedding'),
-        (5, today_str, '08:20', None, 'Present', 98.1, 2, 'Handed over warm formula flask'),
-        (6, today_str, '09:05', None, 'Late', 98.5, 3, 'Traffic delay on Western Express Highway'),
-        (7, today_str, '08:40', None, 'Present', 98.3, 4, 'Participating actively in morning prayer'),
-        (8, today_str, '08:10', None, 'Present', 98.0, 2, 'Morning diaper check completed'),
-        (9, today_str, None, None, 'Excused', None, 5, 'Pediatric vaccination appointment'),
-        (10, today_str, '08:50', None, 'Present', 98.4, 3, 'Brought favourite soft toy')
+        (1, today_str, '08:15', None, 'Present', 98.4, 1, 'Dropped off by mother with diaper bag'),
+        (2, today_str, '08:30', None, 'Present', 98.2, 1, 'Greeted Sunita Auntie warmly, took toy truck'),
+        (3, today_str, '08:45', None, 'Present', 98.6, 2, 'Normal temperature, settled on play rug'),
+        (4, today_str, None, None, 'Absent', None, 1, 'Mother informed: Attending wedding'),
+        (5, today_str, '08:20', None, 'Present', 98.1, 3, 'Handed over warm formula milk flask'),
+        (6, today_str, '09:05', None, 'Late', 98.5, 2, 'Traffic delay on main road'),
+        (7, today_str, '08:40', None, 'Present', 98.3, 1, 'Enjoyed morning rhyme session with Didi'),
+        (8, today_str, '08:10', None, 'Present', 98.0, 3, 'Morning diaper checked, tucked into crib'),
+        (9, today_str, None, None, 'Excused', None, 1, 'Doctor checkup in morning; will drop post lunch'),
+        (10, today_str, '08:50', None, 'Present', 98.4, 2, 'Playing happily with soft doll')
     ])
 
-    # 11. Activities (Indian Food & Child Activities)
+    # 11. Daily Activities (Home cooked meals & home creche care)
     cursor.executemany("""
     INSERT INTO daily_activities (child_id, activity_date, activity_type, start_time, end_time, description, staff_id)
     VALUES (?, ?, ?, ?, ?, ?, ?)
     """, [
-        (1, today_str, 'Meal', '09:00', '09:25', 'Drank 150ml warm soy milk formula peacefully', 8),
-        (1, today_str, 'Nap', '10:00', '11:15', 'Restful morning sleep in The Nest crib #2', 8),
-        (2, today_str, 'Play/Learning', '09:30', '10:30', 'Clay modeling and Diya painting activity', 4),
-        (3, today_str, 'Meal', '09:15', '09:45', 'Ate warm Moong Dal Khichdi with pure cow ghee', 7),
-        (5, today_str, 'Diaper/Potty', '09:30', '09:40', 'Diaper change, rash cream applied', 2),
-        (6, today_str, 'Play/Learning', '09:30', '10:15', 'Sensory sand play and alphabet puzzle circle', 3),
-        (7, today_str, 'Meal', '10:00', '10:25', 'Finished mashed banana and soft Idli with ghee', 4),
-        (10, today_str, 'Play/Learning', '09:15', '10:00', 'Panchatantra story recitation: "The Clever Hare"', 3)
+        (1, today_str, 'Meal', '09:00', '09:25', 'Drank 150ml warm soy milk peacefully on caregiver lap', 3),
+        (1, today_str, 'Nap', '10:00', '11:15', 'Quiet nap in Nursery Nook crib #1 with soft lullaby', 3),
+        (2, today_str, 'Play/Learning', '09:30', '10:30', 'Coloring animal shapes with wax crayons on living room carpet', 1),
+        (3, today_str, 'Meal', '09:15', '09:45', 'Ate warm homemade Moong Dal Khichdi prepared by Parvati Didi', 4),
+        (5, today_str, 'Diaper/Potty', '09:30', '09:40', 'Diaper changed, fresh clothes put on', 3),
+        (6, today_str, 'Play/Learning', '09:30', '10:15', 'Building block tower and stacking rings with friends', 2),
+        (7, today_str, 'Meal', '10:00', '10:25', 'Finished bowl of mashed ripe banana and soft Idli with ghee', 1),
+        (10, today_str, 'Play/Learning', '09:15', '10:00', 'Story recitation on veranda carpet: "The Monkey and the Crocodile"', 1)
     ])
 
     conn.commit()
@@ -620,4 +630,4 @@ def seed_sqlite():
 
 if __name__ == "__main__":
     init_database(force_recreate=True)
-    print(f"Database successfully re-initialized with Indian names and INR currency in {get_active_db_type()} mode!")
+    print(f"Database successfully initialized for Home-Based Creche in {get_active_db_type()} mode!")

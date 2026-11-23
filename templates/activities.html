@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}Activity Logs - EarlyRoots Creche DBMS{% endblock %}
-{% block page_title %}Daily Child Activities{% endblock %}
-{% block page_subtitle %}Chronological activity feed for meals, naps, play sessions, and health incidents{% endblock %}
+{% block title %}Activity Logs - EarlyRoots Home Creche DBMS{% endblock %}
+{% block page_title %}Daily Home Creche Activities{% endblock %}
+{% block page_subtitle %}Chronological activity feed for home-cooked meals, nap times, story circles, and daily care tracking{% endblock %}
 
 {% block content %}
 <div class="card">
   <div class="card-header">
     <div class="card-title">
-      <span>🍎</span> Child Activity Timeline (view_daily_activity_feed)
+      <span>🥣</span> Child Activity Timeline (view_daily_activity_feed)
     </div>
     <button class="btn btn-primary" onclick="openModal('modal-log-activity')">
       <span>+</span> Log New Activity
@@ -25,7 +25,7 @@
 <div id="modal-log-activity" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-header">
-      <h3>Log Child Daily Activity</h3>
+      <h3>Log Daily Home Care Activity</h3>
       <button class="modal-close" onclick="closeModal('modal-log-activity')">&times;</button>
     </div>
     <form onsubmit="handleLogActivity(event)">
@@ -43,16 +43,16 @@
           <div class="form-group">
             <label>Activity Type *</label>
             <select name="activity_type" class="select-control" required>
-              <option value="Meal">Meal / Nutrition</option>
-              <option value="Nap">Nap / Sleep</option>
-              <option value="Play/Learning">Play & Learning</option>
-              <option value="Diaper/Potty">Diaper / Potty</option>
+              <option value="Meal">Home Meal / Nutrition</option>
+              <option value="Nap">Quiet Nap / Sleep</option>
+              <option value="Play/Learning">Home Play & Rhymes</option>
+              <option value="Diaper/Potty">Diaper / Potty Care</option>
               <option value="Medication">Medication Administered</option>
               <option value="Incident">Incident / Alert</option>
             </select>
           </div>
           <div class="form-group">
-            <label>Caregiver / Staff</label>
+            <label>Caregiver / Helper (Didi)</label>
             <select name="staff_id" class="select-control">
               {% for s in staff %}
                 <option value="{{ s.staff_id }}">{{ s.name }}</option>

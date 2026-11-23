@@ -2,13 +2,14 @@
 
 ---
 
-# **EARLYROOTS: DAYCARE & CRECHE MANAGEMENT SYSTEM**
+# **EARLYROOTS: HOME-BASED CRECHE MANAGEMENT SYSTEM**
 
 **Course:** Database Management Systems (DBMS) Laboratory  
-**Topic:** Daycare / Creche Management System  
+**Topic:** Home-Based Creche & Family Daycare Management System  
 **Brand Identity:** EarlyRoots (🌱)  
+**Nature of Enterprise:** Residential Home-Based Creche / Family Daycare  
 **Technology Stack:**
-- **Frontend:** HTML5, CSS3 (Indian Warm Palette), JavaScript (Vanilla ES6, Fetch API)
+- **Frontend:** HTML5, CSS3 (Warm Indian Palette), JavaScript (Vanilla ES6, Fetch API)
 - **Backend:** Python 3 (Flask RESTful Web Framework)
 - **Database Engine:** MySQL / MariaDB (InnoDB) & SQLite3 Embedded Engine
 - **Currency:** Indian Rupee (₹ INR)
@@ -18,30 +19,32 @@
 
 ## 1. ABSTRACT
 
-Modern early childhood development centers and daycare creches in India require meticulous record management to ensure child safety, real-time parent communication, regulatory compliance, and transparent financial billing. Traditional paper-based registers or disjointed spreadsheets often suffer from data redundancy, inconsistent updates, loss of critical allergy records, and lack of referential integrity.
+In modern Indian urban environments, home-based creches (also recognized as family daycares or neighborhood home nurseries) provide an intimate, affectionate, and reliable alternative to institutional schools and commercial daycare chains. Conducted within a warm residential setting, a home-based creche accommodates small, close-knit cohorts of children (typically 4 to 6 kids per home space) supervised by a dedicated **Creche Host / Mother**, assisted by caring helpers (**Didis**), a home cook preparing fresh, nourishing Indian meals (*Moong Dal Khichdi, Mashed Banana, Ragi Porridge*), and a visiting pediatric nurse.
 
-This project, titled **"EarlyRoots: Daycare & Creche Management System"**, presents a relational database solution engineered to centralize nursery and playgroup operations. The system systematically models children, parents/guardians, certified educators, classrooms with strict capacity thresholds (such as *The Nest*, *The Burrow*, *The Hive*, and *The Discovery Lab*), daily attendance registers, nutrition/nap activity tracking (such as Khichdi, Idli, and ragi meal schedules), and monthly tuition billing in Indian Rupees (₹). 
+Despite the domestic setting, managing a home creche demands rigorous data integrity: strict adherence to safe room capacities, precise tracking of life-threatening allergies, verified parent pickup authorizations, daily attendance with morning temperature checks, and transparent monthly accounting in Indian Rupees (₹).
 
-By enforcing rigorous DBMS principles—such as Third Normal Form (3NF) relational decomposition, foreign key cascade/restrict integrity, automated database triggers for overfill prevention and payment status synchronization, parameterized stored procedures, and complex SQL views—the application delivers a tamper-resistant, ACID-compliant, and high-performance management architecture paired with an intuitive, culturally warm web interface.
+This project, titled **"EarlyRoots: Home-Based Creche Management System"**, delivers an enterprise-grade relational database solution customized for residential home daycare operations. The system models cozy home spaces (*Nursery Nook, Toddler Play Den, Activity Veranda, Sunshine Play Yard*), children, parents/guardians, home helpers, meal and nap logs, and home care subscription packages (*Full-Day Home Stay, Half-Day Play & Care, After-School Care, Infant Nurture Care*).
+
+By enforcing rigorous DBMS principles—such as Third Normal Form (3NF) relational decomposition, foreign key cascade/restrict integrity, automated database triggers for capacity enforcement and payment status synchronization, parameterized stored procedures, and complex SQL views—the application delivers a tamper-resistant, ACID-compliant, and high-performance management architecture paired with an affectionate, culturally grounded web interface.
 
 ---
 
 ## 2. PROBLEM STATEMENT & OBJECTIVES
 
 ### 2.1 Problem Statement
-Daycares handle sensitive medical alerts, emergency pickup authorizations, and dynamic schedules. Without a formal relational database management system:
-1. **Medical and Allergy Risks:** An unlinked allergen or missing medical alert can endanger a child's life.
-2. **Classroom Overfill Violations:** Daycare licensing laws mandate strict child-to-caregiver ratios. Unchecked registrations result in regulatory penalties.
-3. **Billing Discrepancies:** Manual payment calculation across multi-tiered fee plans leads to revenue leakage and uncollected balances.
-4. **Lack of Auditability:** Absence of transactional mutation logging leaves administrators blind to record alterations.
+Home-based creches operate in residential premises where personal attention and safety are paramount. Without a formal relational database system:
+1. **Medical and Allergy Risks:** An unlinked allergen or missing medical alert can endanger a child's health during home meal times.
+2. **Cozy Capacity Violations:** Residential spaces have strict physical and regulatory child-to-caregiver limits. Overbooking destroys the individualized attention central to a home creche.
+3. **Billing Discrepancies:** Manual fee collection across varied home care packages leads to accounting errors and unrecorded dues.
+4. **Lack of Auditability:** Absence of transactional mutation logging leaves operators without verified proof of check-ins, pickups, and record modifications.
 
 ### 2.2 System Objectives
 - **Integrity & Safety:** Ensure that every child record is tied to verified guardians and immediate emergency contacts with explicit pickup authorizations.
 - **Relational Normalization:** Eliminate data anomalies (insertion, deletion, and update anomalies) by structuring data into 3NF.
 - **Automated Business Rules via SQL Triggers:**
-  - Enforce room capacity constraints prior to enrollment (`BEFORE INSERT`).
-  - Automatically update invoice payment statuses and balances upon receipt insertion (`AFTER INSERT`).
-  - Maintain an immutable audit trail (`audit_logs`) of student movements and transactions.
+  - Enforce cozy home care space capacity constraints prior to enrollment (`BEFORE INSERT`).
+  - Automatically update care package invoice statuses and balances upon receipt insertion (`AFTER INSERT`).
+  - Maintain an immutable audit trail (`audit_logs`) of child admissions, payments, and movements.
 - **Reporting via Database Views:** Supply instant analytical summaries for room occupancy, attendance counts, and overdue debts without costly manual queries.
 - **Interactive Evaluation Console:** Enable evaluators and database administrators to run custom and preset SQL queries with dynamic schema inspection.
 
@@ -50,17 +53,18 @@ Daycares handle sensitive medical alerts, emergency pickup authorizations, and d
 ## 3. USER ROLES & SYSTEM REQUIREMENTS
 
 ### 3.1 User Roles
-1. **Daycare Administrator:** Manages room assignments, sets fee plans, monitors revenue collection, reviews audit logs, and registers staff.
-2. **Lead Educator / Caregiver:** Marks daily attendance, logs meals, naps, educational milestones, and reviews child allergy profiles.
-3. **Medical Nurse:** Maintains immunization, allergy records, and special medical action plans.
-4. **Parent / Guardian:** Verified individuals authorized for communication, invoice settlement, and child pickup.
+1. **Creche Host / Founder:** Residential owner/homemaker running the home creche, overseeing admissions, care plans, nutrition schedules, and parent communication.
+2. **Care Assistant / Didi:** Dedicated childcare helper managing daily hygiene, feeding, nap times, sensory play, and safety supervision.
+3. **Home Cook:** Prepares fresh, warm, hygienic homemade Indian meals and snacks.
+4. **Visiting Pediatric Nurse:** Provides periodic health evaluations, vaccination monitoring, and emergency health advice.
+5. **Parent / Guardian:** Verified parents authorized for home drop-off, pickup, and invoice settlement.
 
 ### 3.2 Functional Requirements
-- **FR1 (Child Enrollment):** Register child personal details, assign to appropriate age-specific room, link primary guardian.
-- **FR2 (Allergy Management):** Record allergen type, severity (Mild, Moderate, Severe), and medical emergency action plans.
+- **FR1 (Child Enrollment):** Register child personal details, assign to a cozy home care space (enforced by capacity trigger), link primary guardian.
+- **FR2 (Allergy & Medical Management):** Record allergen type, severity (Mild, Moderate, Severe), and domestic medical action plans.
 - **FR3 (Daily Attendance):** Log daily check-in, check-out timestamps, morning body temperatures, and status (Present, Late, Absent, Excused).
-- **FR4 (Activity Feed):** Record feeding logs, naps, learning play, potty intervals, and incident alerts.
-- **FR5 (Tuition Billing & Payments):** Generate monthly tuition invoices and record payments with instant receipt numbers.
+- **FR4 (Home Activity Feed):** Record homemade meal times, quiet naps, rhyme sessions, potty intervals, and incident alerts.
+- **FR5 (Care Invoices & Payments):** Generate monthly home care package invoices and record payments with instant receipt numbers in INR (₹).
 - **FR6 (Live SQL Explorer):** Execute ad-hoc queries, test views, and verify relational constraints.
 
 ---

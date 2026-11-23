@@ -1,27 +1,24 @@
 -- ====================================================================
--- KILKARI CRECHE & DAYCARE MANAGEMENT SYSTEM
+-- EARLYROOTS HOME-BASED CRECHE MANAGEMENT SYSTEM
 -- Sample Data Insertion Script (MySQL Compatible with Indian Names & INR)
 -- ====================================================================
 
 USE daycare_db;
 
--- 1. Insert Classrooms / Pods (Theme 5: Modern Montessori & Nordic Style)
+-- 1. Insert Home Care Spaces (Cozy residential rooms with small capacities)
 INSERT INTO rooms (room_name, age_group, capacity, room_type) VALUES
-('The Nest', '0-12 months', 8, 'Infant Nursery'),
-('The Burrow', '1-2 years', 12, 'Toddler Sensory Playroom'),
-('The Hive', '2-3.5 years', 15, 'Collaborative Learning Pod'),
-('The Discovery Lab', '3.5-5 years', 18, 'Kindergarten Activity Lab');
+('Nursery Nook', '0-12 months', 4, 'Baby Crib Living Area'),
+('Toddler Play Den', '1-2.5 years', 6, 'Living Room Play Space'),
+('Activity Veranda', '2.5-4 years', 6, 'Covered Sunlit Veranda'),
+('Sunshine Play Yard', '3-5 years', 8, 'Fenced Lawn & Sand Pit');
 
--- 2. Insert Staff Members (Indian Educators & Healthcare Staff)
+-- 2. Insert Staff Members (Creche Host, Helpers/Didis, Home Cook, Visiting Nurse)
 INSERT INTO staff (first_name, last_name, role, phone, email, qualification, assigned_room_id, hire_date, salary) VALUES
-('Sunita', 'Deshmukh', 'Administrator', '9820112233', 'sunita.admin@earlyroots.in', 'M.Ed Early Childhood Education', NULL, '2022-01-15', 55000.00),
-('Anita', 'Menon', 'Lead Educator', '9820112234', 'anita.m@earlyroots.in', 'B.Ed & Montessori Certified', 1, '2022-03-01', 42000.00),
-('Rajeshwari', 'Pillai', 'Lead Educator', '9820112235', 'rajeshwari.p@earlyroots.in', 'Diploma in Child Psychology', 2, '2022-06-10', 40000.00),
-('Meenakshi', 'Sundaram', 'Lead Educator', '9820112236', 'meenakshi.s@earlyroots.in', 'B.Sc Child Development', 3, '2023-01-10', 41000.00),
-('Farhan', 'Akhtar', 'Lead Educator', '9820112237', 'farhan.a@earlyroots.in', 'B.A Primary Education', 4, '2023-04-15', 39000.00),
-('Sister Mary', 'Joseph', 'Nurse', '9820112238', 'mary.nurse@earlyroots.in', 'Registered Pediatric Nurse (B.Sc Nursing)', NULL, '2022-08-01', 45000.00),
-('Lakshmi', 'Bai', 'Caregiver', '9820112239', 'lakshmi.b@earlyroots.in', 'Certified Child Care Attendant', 2, '2023-09-01', 30000.00),
-('Geeta', 'Devi', 'Caregiver', '9820112240', 'geeta.d@earlyroots.in', 'CPR & First Aid Certified', 1, '2023-11-15', 30000.00);
+('Sunita', 'Deshmukh', 'Creche Host', '9820112233', 'sunita.host@earlyroots.in', 'Home Creche Founder & Lead Caregiver', 1, '2021-06-01', 50000.00),
+('Anita', 'Menon', 'Care Assistant', '9820112234', 'anita.m@earlyroots.in', 'Senior Care Assistant (Didi)', 2, '2022-01-10', 25000.00),
+('Rajeshwari', 'Pillai', 'Care Assistant', '9820112235', 'rajeshwari.p@earlyroots.in', 'Infant Care Attendant (Didi)', 1, '2022-03-15', 24000.00),
+('Parvati', 'Devi', 'Home Cook', '9820112236', 'parvati.cook@earlyroots.in', 'Fresh Home Food & Nutrition Specialist', NULL, '2022-04-01', 20000.00),
+('Sister Mary', 'Joseph', 'Visiting Nurse', '9820112238', 'mary.nurse@earlyroots.in', 'Registered Pediatric Visiting Nurse', NULL, '2022-08-01', 22000.00);
 
 -- 3. Insert Guardians / Parents (Indian Names & Metro Addresses)
 INSERT INTO guardians (first_name, last_name, relationship, phone, email, address, occupation) VALUES
@@ -71,25 +68,25 @@ INSERT INTO allergies_medical (child_id, allergen_type, allergen_name, severity,
 (7, 'Medicine', 'Penicillin & Amoxicillin', 'Severe', 'Medical alert band worn; inform attending doctor immediately'),
 (9, 'Food', 'Gluten / Wheat', 'Moderate', 'Provide gluten-free ragi or rice snacks and khichdi');
 
--- 7. Fee Plans (in INR ₹)
+-- 7. Fee Plans (in INR ₹ - Home Care Packages)
 INSERT INTO fee_plans (plan_name, description, frequency, amount) VALUES
-('The Nest Full-Day Infant Care', 'Full daycare with nutrition, warm oil massage, diapering, and nap logs (8am-6pm)', 'Monthly', 14500.00),
-('The Burrow Toddler Playgroup', 'Structured motor skills, sensory play, fresh hot lunch, and nap (8am-5pm)', 'Monthly', 11500.00),
-('The Hive Half-Day Program', 'Morning early learning, music, and socialization (8:30am-12:30pm)', 'Monthly', 7500.00),
-('The Discovery Lab Extended Day', 'School readiness curriculum with evening activity club (8am-6pm)', 'Monthly', 12500.00);
+('Full-Day Home Stay', 'Comprehensive full-day home daycare with fresh homemade lunch, milk, snacks, and naps (8:00 AM - 6:30 PM)', 'Monthly', 12500.00),
+('Half-Day Play & Care', 'Morning home playgroup, sensory activities, rhyme circle, and warm snack (8:30 AM - 1:00 PM)', 'Monthly', 7500.00),
+('After-School Home Care', 'Nutritious evening snacks, supervised homework, story-time, and safe veranda play (1:30 PM - 7:00 PM)', 'Monthly', 6500.00),
+('Infant Nurture Care', 'Individual infant crib care, formula/breastmilk feeding, warm massage, and diaper changes (8:30 AM - 5:30 PM)', 'Monthly', 14500.00);
 
 -- 8. Invoices (in INR ₹)
 INSERT INTO invoices (child_id, plan_id, billing_period, total_amount, discount_amount, net_amount, due_date, status) VALUES
-(1, 1, 'November 2026', 14500.00, 0.00, 14500.00, '2026-11-28', 'Paid'),
-(2, 3, 'November 2026', 7500.00, 500.00, 7000.00, '2026-11-28', 'Paid'),
-(3, 2, 'November 2026', 11500.00, 0.00, 11500.00, '2026-11-28', 'Partially Paid'),
-(4, 4, 'November 2026', 12500.00, 0.00, 12500.00, '2026-11-20', 'Overdue'),
-(5, 1, 'November 2026', 14500.00, 0.00, 14500.00, '2026-11-28', 'Paid'),
-(6, 2, 'November 2026', 11500.00, 0.00, 11500.00, '2026-11-25', 'Pending'),
-(7, 3, 'November 2026', 7500.00, 0.00, 7500.00, '2026-11-28', 'Pending'),
-(8, 1, 'November 2026', 14500.00, 1000.00, 13500.00, '2026-11-28', 'Paid'),
-(9, 4, 'November 2026', 12500.00, 0.00, 12500.00, '2026-11-15', 'Overdue'),
-(10, 2, 'November 2026', 11500.00, 0.00, 11500.00, '2026-11-28', 'Paid');
+(1, 4, 'November 2026', 14500.00, 0.00, 14500.00, '2026-11-28', 'Paid'),
+(2, 2, 'November 2026', 7500.00, 500.00, 7000.00, '2026-11-28', 'Paid'),
+(3, 1, 'November 2026', 12500.00, 0.00, 12500.00, '2026-11-28', 'Partially Paid'),
+(4, 3, 'November 2026', 6500.00, 0.00, 6500.00, '2026-11-20', 'Overdue'),
+(5, 4, 'November 2026', 14500.00, 0.00, 14500.00, '2026-11-28', 'Paid'),
+(6, 1, 'November 2026', 12500.00, 0.00, 12500.00, '2026-11-25', 'Pending'),
+(7, 2, 'November 2026', 7500.00, 0.00, 7500.00, '2026-11-28', 'Pending'),
+(8, 4, 'November 2026', 14500.00, 1000.00, 13500.00, '2026-11-28', 'Paid'),
+(9, 3, 'November 2026', 6500.00, 0.00, 6500.00, '2026-11-15', 'Overdue'),
+(10, 1, 'November 2026', 12500.00, 0.00, 12500.00, '2026-11-28', 'Paid');
 
 -- 9. Payments (UPI / NetBanking / Cards in ₹)
 INSERT INTO payments (invoice_id, amount_paid, payment_date, payment_mode, transaction_ref, receipt_number) VALUES
@@ -98,28 +95,28 @@ INSERT INTO payments (invoice_id, amount_paid, payment_date, payment_mode, trans
 (3, 6000.00, '2026-11-04', 'NetBanking', 'HDFC-IMPS-88412', 'REC-003'),
 (5, 14500.00, '2026-11-05', 'UPI', 'UPI/2026/Paytm/33120', 'REC-004'),
 (8, 13500.00, '2026-11-02', 'Card', 'TXN-ICICI-77112', 'REC-005'),
-(10, 11500.00, '2026-11-06', 'Cash', 'CASH-REC-101', 'REC-006');
+(10, 12500.00, '2026-11-06', 'Cash', 'CASH-REC-101', 'REC-006');
 
 -- 10. Daily Attendance
 INSERT INTO attendance (child_id, attendance_date, check_in_time, check_out_time, status, temperature_f, checked_in_by_staff_id, remarks) VALUES
-(1, CURDATE(), '08:15:00', NULL, 'Present', 98.4, 2, 'Arrived cheerfully with mother'),
-(2, CURDATE(), '08:30:00', NULL, 'Present', 98.2, 4, 'Carrying drawing book'),
-(3, CURDATE(), '08:45:00', NULL, 'Present', 98.6, 3, 'Temperature checked, normal'),
-(4, CURDATE(), NULL, NULL, 'Absent', NULL, 5, 'Family out of station for wedding'),
-(5, CURDATE(), '08:20:00', NULL, 'Present', 98.1, 2, 'Handed over warm formula flask'),
-(6, CURDATE(), '09:05:00', NULL, 'Late', 98.5, 3, 'Traffic delay on Western Express Highway'),
-(7, CURDATE(), '08:40:00', NULL, 'Present', 98.3, 4, 'Participating actively in morning prayer'),
-(8, CURDATE(), '08:10:00', NULL, 'Present', 98.0, 2, 'Morning diaper check completed'),
-(9, CURDATE(), NULL, NULL, 'Excused', NULL, 5, 'Pediatric vaccination appointment'),
-(10, CURDATE(), '08:50:00', NULL, 'Present', 98.4, 3, 'Brought favourite soft toy');
+(1, CURDATE(), '08:15:00', NULL, 'Present', 98.4, 1, 'Dropped off by mother with diaper bag'),
+(2, CURDATE(), '08:30:00', NULL, 'Present', 98.2, 1, 'Greeted Sunita Auntie warmly, took toy truck'),
+(3, CURDATE(), '08:45:00', NULL, 'Present', 98.6, 2, 'Normal temperature, settled on play rug'),
+(4, CURDATE(), NULL, NULL, 'Absent', NULL, 1, 'Mother informed: Attending wedding'),
+(5, CURDATE(), '08:20:00', NULL, 'Present', 98.1, 3, 'Handed over warm formula milk flask'),
+(6, CURDATE(), '09:05:00', NULL, 'Late', 98.5, 2, 'Traffic delay on main road'),
+(7, CURDATE(), '08:40:00', NULL, 'Present', 98.3, 1, 'Enjoyed morning rhyme session with Didi'),
+(8, CURDATE(), '08:10:00', NULL, 'Present', 98.0, 3, 'Morning diaper checked, tucked into crib'),
+(9, CURDATE(), NULL, NULL, 'Excused', NULL, 1, 'Doctor checkup in morning; will drop post lunch'),
+(10, CURDATE(), '08:50:00', NULL, 'Present', 98.4, 2, 'Playing happily with soft doll');
 
--- 11. Daily Activities (Indian Nutrition & Activities)
+-- 11. Daily Activities (Home cooked meals & home creche care)
 INSERT INTO daily_activities (child_id, activity_date, activity_type, start_time, end_time, description, staff_id) VALUES
-(1, CURDATE(), 'Meal', '09:00:00', '09:25:00', 'Drank 150ml warm soy milk formula peacefully', 8),
-(1, CURDATE(), 'Nap', '10:00:00', '11:15:00', 'Restful morning sleep in Shishu crib #2', 8),
-(2, CURDATE(), 'Play/Learning', '09:30:00', '10:30:00', 'Clay modeling and Diya painting activity', 4),
-(3, CURDATE(), 'Meal', '09:15:00', '09:45:00', 'Ate warm Moong Dal Khichdi with pure cow ghee', 7),
-(5, CURDATE(), 'Diaper/Potty', '09:30:00', '09:40', 'Diaper change, rash cream applied', 2),
-(6, CURDATE(), 'Play/Learning', '09:30:00', '10:15:00', 'Sensory sand play and alphabet puzzle circle', 3),
-(7, CURDATE(), 'Meal', '10:00:00', '10:25:00', 'Finished mashed banana and soft Idli with ghee', 4),
-(10, CURDATE(), 'Play/Learning', '09:15:00', '10:00:00', 'Panchatantra story recitation: "The Clever Hare"', 3);
+(1, CURDATE(), 'Meal', '09:00:00', '09:25:00', 'Drank 150ml warm soy milk peacefully on caregiver lap', 3),
+(1, CURDATE(), 'Nap', '10:00:00', '11:15:00', 'Quiet nap in Nursery Nook crib #1 with soft lullaby', 3),
+(2, CURDATE(), 'Play/Learning', '09:30:00', '10:30:00', 'Coloring animal shapes with wax crayons on living room carpet', 1),
+(3, CURDATE(), 'Meal', '09:15:00', '09:45:00', 'Ate warm homemade Moong Dal Khichdi prepared by Parvati Didi', 4),
+(5, CURDATE(), 'Diaper/Potty', '09:30:00', '09:40:00', 'Diaper changed, fresh clothes put on', 3),
+(6, CURDATE(), 'Play/Learning', '09:30:00', '10:15:00', 'Building block tower and stacking rings with friends', 2),
+(7, CURDATE(), 'Meal', '10:00:00', '10:25:00', 'Finished bowl of mashed ripe banana and soft Idli with ghee', 1),
+(10, CURDATE(), 'Play/Learning', '09:15:00', '10:00:00', 'Story recitation on veranda carpet: "The Monkey and the Crocodile"', 1);

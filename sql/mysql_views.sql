@@ -38,8 +38,8 @@ LEFT JOIN child_guardians cg ON c.child_id = cg.child_id AND cg.is_primary_conta
 LEFT JOIN guardians g ON cg.guardian_id = g.guardian_id;
 
 -- --------------------------------------------------------------------
--- VIEW 2: Room Capacity & Utilization Summary
--- Tracks occupancy percentage, available slots, and assigned lead teacher
+-- VIEW 2: Care Space Capacity & Utilization Summary
+-- Tracks occupancy percentage, available slots, and assigned caregiver
 -- --------------------------------------------------------------------
 DROP VIEW IF EXISTS view_room_summary;
 CREATE VIEW view_room_summary AS
@@ -49,13 +49,13 @@ SELECT
     r.age_group,
     r.capacity,
     r.room_type,
-    COUNT(c.child_id) AS current_enrolled,
-    (r.capacity - COUNT(c.child_id)) AS available_slots,
-    ROUND((COUNT(c.child_id) * 100.0 / r.capacity), 1) AS occupancy_percentage,
+    COUNT(DISTINCT c.child_id) AS current_enrolled,
+    (r.capacity - COUNT(DISTINCT c.child_id)) AS available_slots,
+    ROUND((COUNT(DISTINCT c.child_id) * 100.0 / r.capacity), 1) AS occupancy_percentage,
     COALESCE(CONCAT(s.first_name, ' ', s.last_name), 'Unassigned') AS lead_educator
 FROM rooms r
 LEFT JOIN children c ON r.room_id = c.room_id AND c.status = 'Active'
-LEFT JOIN staff s ON r.room_id = s.assigned_room_id AND s.role = 'Lead Educator'
+LEFT JOIN staff s ON r.room_id = s.assigned_room_id AND s.role IN ('Creche Host', 'Care Assistant', 'Lead Educator')
 GROUP BY r.room_id, r.room_name, r.age_group, r.capacity, r.room_type, s.first_name, s.last_name;
 
 -- --------------------------------------------------------------------

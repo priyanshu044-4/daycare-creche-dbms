@@ -1,8 +1,9 @@
-# EarlyRoots: Daycare & Creche Management System
+# EarlyRoots: Home-Based Creche Management System
 ### A Full-Featured Relational Database Management Systems (DBMS) Mini Project
 
-> **Topic:** Daycare / Creche Management System  
+> **Topic:** Home-Based Creche & Family Daycare Management System  
 > **Brand Name:** EarlyRoots (🌱)  
+> **Nature of Creche:** Residential Home Daycare (Cozy living spaces, capacities of 4–6 children, Creche Host / Mother, Care Assistant Didis, Home Cook)  
 > **Frontend:** HTML5, CSS3, Modern JavaScript (Vanilla ES6, Fetch API)  
 > **Backend:** Python Flask  
 > **Database:** Dual-Engine Support (MySQL / MariaDB and Zero-Setup Embedded SQLite)  
@@ -18,7 +19,7 @@
    - **University Lab Mode (MySQL):** Full MySQL schema with `ENGINE=InnoDB`, `DELIMITER //` triggers, stored procedures, and sample seed scripts ready for phpMyAdmin or MySQL Workbench.
    - The app auto-detects MySQL on port 3306 or gracefully uses SQLite, displaying the active database status in the UI!
 2. **Database Triggers in Action:**
-   - `trg_enforce_room_capacity`: Prevents overbooking rooms beyond licensed capacity.
+   - `trg_enforce_room_capacity`: Prevents overbooking cozy home care spaces beyond their approved safe capacity.
    - `trg_payment_update_invoice`: Automatically calculates cumulative payments and updates invoice statuses (`Paid` / `Partially Paid`).
    - `trg_child_audit_insert` & `trg_child_audit_update`: Automatically populates the `audit_logs` table.
 3. **5 Analytical & Operational Views:**

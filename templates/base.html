@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}EarlyRoots - Daycare & Creche Management System{% endblock %}</title>
+  <title>{% block title %}EarlyRoots - Home Creche Management System{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
@@ -14,7 +14,7 @@
       <div class="brand-icon">🌱</div>
       <div>
         <div class="brand-title">EarlyRoots</div>
-        <div class="brand-subtitle">Creche DBMS</div>
+        <div class="brand-subtitle">Home Creche DBMS</div>
       </div>
     </div>
 
@@ -51,14 +51,14 @@
       </li>
       <li class="nav-item">
         <a href="{{ url_for('rooms_staff_page') }}" class="nav-link {% if request.path == '/rooms-staff' %}active{% endif %}">
-          <span class="nav-icon">🏫</span>
-          <span>Rooms & Staff</span>
+          <span class="nav-icon">🏡</span>
+          <span>Care Spaces & Helpers</span>
         </a>
       </li>
       <li class="nav-item">
         <a href="{{ url_for('billing_page') }}" class="nav-link {% if request.path == '/billing' %}active{% endif %}">
           <span class="nav-icon">₹</span>
-          <span>Fees & Invoices (INR)</span>
+          <span>Care Packages (INR)</span>
         </a>
       </li>
       <li class="nav-item">
@@ -83,8 +83,8 @@
     <!-- Topbar -->
     <header class="topbar">
       <div class="page-title-box">
-        <h1>{% block page_title %}EarlyRoots Daycare & Creche Management System{% endblock %}</h1>
-        <p>{% block page_subtitle %}Relational Database Management System (DBMS Mini Project){% endblock %}</p>
+        <h1>{% block page_title %}EarlyRoots Home-Based Family Creche{% endblock %}</h1>
+        <p>{% block page_subtitle %}Relational Database Management System for Home Daycare & Childcare{% endblock %}</p>
       </div>
       <div class="topbar-actions">
         <span style="font-size: 13px; color: var(--gray-700); font-weight: 600; background: #faf5ee; padding: 6px 12px; border-radius: 6px; border: 1px solid #e7ded3;">

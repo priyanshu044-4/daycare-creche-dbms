@@ -29,7 +29,7 @@ BEGIN
 
     IF current_count >= max_capacity THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Enrollment Error: Target room has reached its maximum capacity!';
+        SET MESSAGE_TEXT = 'Enrollment Error: Target home care space has reached its maximum cozy capacity!';
     END IF;
 END//
 

@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %}Children Directory - EarlyRoots Creche DBMS{% endblock %}
+{% block title %}Children Directory - EarlyRoots Home Creche DBMS{% endblock %}
 {% block page_title %}Children Management Register{% endblock %}
-{% block page_subtitle %}Manage child admissions, allergy profiles, emergency contacts, and classroom pods{% endblock %}
+{% block page_subtitle %}Manage child admissions, allergy profiles, emergency contacts, and home care spaces{% endblock %}
 
 {% block content %}
 <div class="card">
@@ -18,7 +18,7 @@
     <!-- Filter Controls -->
     <div class="filter-bar">
       <select id="filter-room" class="select-control" onchange="loadChildren()">
-        <option value="">All Classrooms / Pods</option>
+        <option value="">All Home Care Spaces</option>
         {% for r in rooms %}
           <option value="{{ r.room_id }}">{{ r.room_name }} (Capacity: {{ r.capacity }})</option>
         {% endfor %}
@@ -42,7 +42,7 @@
           <tr>
             <th>ID</th>
             <th>Child Name</th>
-            <th>Classroom Pod</th>
+            <th>Home Care Space</th>
             <th>Primary Guardian</th>
             <th>Medical / Allergy Alert</th>
             <th>Status</th>
@@ -108,7 +108,7 @@
 
         <div class="form-grid-2">
           <div class="form-group">
-            <label>Assign Classroom Pod * (Enforced by Trigger)</label>
+            <label>Assign Home Care Space * (Enforced by Trigger)</label>
             <select name="room_id" class="select-control" required>
               {% for r in rooms %}
                 <option value="{{ r.room_id }}">{{ r.room_name }} ({{ r.age_group }}) - Cap: {{ r.capacity }}</option>

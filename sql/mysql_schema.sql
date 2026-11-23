@@ -1,5 +1,5 @@
 -- ====================================================================
--- DAYCARE / CRECHE MANAGEMENT SYSTEM (DBMS MINI PROJECT)
+-- EARLYROOTS HOME-BASED CRECHE MANAGEMENT SYSTEM (DBMS MINI PROJECT)
 -- Database DDL Schema (MySQL / MariaDB Compatible)
 -- Engine: InnoDB | Character Set: utf8mb4
 -- ====================================================================
@@ -26,25 +26,25 @@ DROP TABLE IF EXISTS rooms;
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- --------------------------------------------------------------------
--- 1. ROOMS TABLE (Classrooms / Age Groups)
+-- 1. ROOMS TABLE (Home Care Spaces: Nursery Nook, Play Den, Veranda)
 -- --------------------------------------------------------------------
 CREATE TABLE rooms (
     room_id INT AUTO_INCREMENT PRIMARY KEY,
     room_name VARCHAR(100) NOT NULL UNIQUE,
     age_group VARCHAR(50) NOT NULL,
     capacity INT NOT NULL,
-    room_type VARCHAR(50) DEFAULT 'Classroom',
+    room_type VARCHAR(50) DEFAULT 'Home Living Area',
     CONSTRAINT chk_room_capacity CHECK (capacity > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------------------
--- 2. STAFF TABLE (Educators, Nurses, Administrators)
+-- 2. STAFF TABLE (Creche Host, Helpers/Didis, Home Cook, Visiting Nurse)
 -- --------------------------------------------------------------------
 CREATE TABLE staff (
     staff_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    role ENUM('Administrator', 'Lead Educator', 'Caregiver', 'Nurse', 'Cook') NOT NULL,
+    role ENUM('Creche Host', 'Care Assistant', 'Visiting Nurse', 'Home Cook', 'Lead Educator', 'Caregiver') NOT NULL,
     phone VARCHAR(20) NOT NULL,
     email VARCHAR(100) UNIQUE,
     qualification VARCHAR(100),

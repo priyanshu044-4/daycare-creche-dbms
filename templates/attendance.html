@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}Daily Attendance - EarlyRoots Creche DBMS{% endblock %}
+{% block title %}Daily Attendance - EarlyRoots Home Creche DBMS{% endblock %}
 {% block page_title %}Daily Attendance Tracker{% endblock %}
-{% block page_subtitle %}Real-time student check-in, check-out, temperature logs, and absence tracking{% endblock %}
+{% block page_subtitle %}Real-time child arrival, pick-up, temperature health checks, and home care notes{% endblock %}
 
 {% block content %}
 <div class="card">
   <div class="card-header">
     <div class="card-title">
-      <span>📋</span> Student Attendance Register
+      <span>📋</span> Child Attendance & Care Register
     </div>
     <span style="font-size: 13px; color: var(--gray-500);">Live synchronization with attendance table</span>
   </div>
@@ -21,9 +21,9 @@
       </div>
 
       <div>
-        <label style="font-size: 12px; font-weight: 600; color: var(--gray-500); display: block; margin-bottom: 4px;">Classroom</label>
+        <label style="font-size: 12px; font-weight: 600; color: var(--gray-500); display: block; margin-bottom: 4px;">Care Space</label>
         <select id="attendance-room" class="select-control" onchange="loadAttendance()">
-          <option value="">All Rooms</option>
+          <option value="">All Spaces</option>
           {% for r in rooms %}
             <option value="{{ r.room_id }}">{{ r.room_name }}</option>
           {% endfor %}
@@ -42,7 +42,7 @@
           <tr>
             <th>ID</th>
             <th>Child Name</th>
-            <th>Classroom</th>
+            <th>Care Space</th>
             <th>Status</th>
             <th>Check In</th>
             <th>Check Out</th>

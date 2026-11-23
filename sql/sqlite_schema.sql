@@ -1,25 +1,25 @@
 -- ====================================================================
--- DAYCARE / CRECHE MANAGEMENT SYSTEM
+-- EARLYROOTS HOME-BASED CRECHE MANAGEMENT SYSTEM
 -- Standalone SQLite DDL Schema, Views & Triggers
 -- ====================================================================
 
 PRAGMA foreign_keys = ON;
 
--- 1. Rooms Table
+-- 1. Rooms Table (Home Care Spaces)
 CREATE TABLE IF NOT EXISTS rooms (
     room_id INTEGER PRIMARY KEY AUTOINCREMENT,
     room_name TEXT NOT NULL UNIQUE,
     age_group TEXT NOT NULL,
     capacity INTEGER NOT NULL CHECK(capacity > 0),
-    room_type TEXT DEFAULT 'Classroom'
+    room_type TEXT DEFAULT 'Home Living Area'
 );
 
--- 2. Staff Table
+-- 2. Staff Table (Creche Host & Care Helpers / Didis)
 CREATE TABLE IF NOT EXISTS staff (
     staff_id INTEGER PRIMARY KEY AUTOINCREMENT,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
-    role TEXT NOT NULL CHECK(role IN ('Administrator', 'Lead Educator', 'Caregiver', 'Nurse', 'Cook')),
+    role TEXT NOT NULL CHECK(role IN ('Creche Host', 'Care Assistant', 'Visiting Nurse', 'Home Cook', 'Lead Educator', 'Caregiver')),
     phone TEXT NOT NULL,
     email TEXT UNIQUE,
     qualification TEXT,
@@ -222,13 +222,13 @@ SELECT
     r.age_group,
     r.capacity,
     r.room_type,
-    COUNT(c.child_id) AS current_enrolled,
-    (r.capacity - COUNT(c.child_id)) AS available_slots,
-    ROUND((COUNT(c.child_id) * 100.0 / r.capacity), 1) AS occupancy_percentage,
+    COUNT(DISTINCT c.child_id) AS current_enrolled,
+    (r.capacity - COUNT(DISTINCT c.child_id)) AS available_slots,
+    ROUND((COUNT(DISTINCT c.child_id) * 100.0 / r.capacity), 1) AS occupancy_percentage,
     COALESCE(s.first_name || ' ' || s.last_name, 'Unassigned') AS lead_educator
 FROM rooms r
 LEFT JOIN children c ON r.room_id = c.room_id AND c.status = 'Active'
-LEFT JOIN staff s ON r.room_id = s.assigned_room_id AND s.role = 'Lead Educator'
+LEFT JOIN staff s ON r.room_id = s.assigned_room_id AND s.role IN ('Creche Host', 'Care Assistant', 'Lead Educator')
 GROUP BY r.room_id;
 
 DROP VIEW IF EXISTS view_pending_dues;

@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - EarlyRoots Creche DBMS{% endblock %}
-{% block page_title %}Dashboard & Analytics Overview{% endblock %}
-{% block page_subtitle %}Classroom occupancy, attendance metrics, and automated SQL trigger audit logs{% endblock %}
+{% block title %}Dashboard - EarlyRoots Home Creche DBMS{% endblock %}
+{% block page_title %}Home Creche Dashboard & Live Overview{% endblock %}
+{% block page_subtitle %}Residential care space capacity, daily attendance metrics, and automated SQL trigger audit logs{% endblock %}
 
 {% block content %}
 <div id="dashboard-stats">
@@ -25,10 +25,10 @@
     </div>
 
     <div class="stat-card">
-      <div class="stat-icon-wrapper icon-blue">👩‍🏫</div>
+      <div class="stat-icon-wrapper icon-blue">👩‍👧</div>
       <div class="stat-info">
         <h3 id="stat-staff">--</h3>
-        <span>Active Staff & Teachers</span>
+        <span>Caregivers & Helpers</span>
       </div>
     </div>
 
@@ -36,7 +36,7 @@
       <div class="stat-icon-wrapper icon-amber">₹</div>
       <div class="stat-info">
         <h3 id="stat-dues">--</h3>
-        <span>Pending Tuition Dues (INR)</span>
+        <span>Pending Care Dues (INR)</span>
       </div>
     </div>
   </div>
@@ -47,12 +47,12 @@
     <div class="card">
       <div class="card-header">
         <div class="card-title">
-          <span>🏫</span> Classroom Capacity & Utilization (view_room_summary)
+          <span>🏡</span> Home Care Spaces & Capacity (view_room_summary)
         </div>
-        <a href="{{ url_for('rooms_staff_page') }}" class="btn btn-secondary btn-sm">View All Rooms</a>
+        <a href="{{ url_for('rooms_staff_page') }}" class="btn btn-secondary btn-sm">View All Spaces</a>
       </div>
       <div class="card-body" id="dashboard-rooms">
-        <p style="color: var(--gray-500);">Loading classroom capacity metrics...</p>
+        <p style="color: var(--gray-500);">Loading care space capacity metrics...</p>
       </div>
     </div>
 

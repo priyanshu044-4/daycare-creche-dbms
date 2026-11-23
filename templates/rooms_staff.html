@@ -1,21 +1,21 @@
 {% extends "base.html" %}
 
-{% block title %}Rooms & Staff - EarlyRoots Creche DBMS{% endblock %}
-{% block page_title %}Rooms & Staff Management{% endblock %}
-{% block page_subtitle %}Classroom allocation, capacity constraints, and childcare educators{% endblock %}
+{% block title %}Care Spaces & Helpers - EarlyRoots Home Creche{% endblock %}
+{% block page_title %}Home Care Spaces & Helpers{% endblock %}
+{% block page_subtitle %}Residential rooms, cozy nooks (capacity: 4-6 children), creche host, and care helpers (Didis){% endblock %}
 
 {% block content %}
 <!-- Rooms Overview (View 2) -->
 <div class="card">
   <div class="card-header">
     <div class="card-title">
-      <span>🏫</span> Daycare Rooms & Capacity (view_room_summary)
+      <span>🏡</span> Cozy Care Spaces & Capacities (view_room_summary)
     </div>
   </div>
   <div class="card-body">
     <div class="stats-grid" id="rooms-cards-grid">
       <!-- Populated via script or server -->
-      <p style="color: var(--gray-500);">Loading rooms data...</p>
+      <p style="color: var(--gray-500);">Loading care spaces data...</p>
     </div>
   </div>
 </div>
@@ -24,7 +24,7 @@
 <div class="card">
   <div class="card-header">
     <div class="card-title">
-      <span>👩‍🏫</span> Staff & Educators Directory
+      <span>👩‍👧</span> Creche Host & Care Helpers (Didis) Directory
     </div>
   </div>
   <div class="card-body">
@@ -35,14 +35,14 @@
             <th>ID</th>
             <th>Name</th>
             <th>Role</th>
-            <th>Assigned Classroom</th>
+            <th>Assigned Care Space</th>
             <th>Phone</th>
             <th>Email</th>
-            <th>Qualification</th>
+            <th>Experience / Qualification</th>
           </tr>
         </thead>
         <tbody id="staff-table-body">
-          <tr><td colspan="7" style="text-align: center; padding: 20px;">Loading staff members...</td></tr>
+          <tr><td colspan="7" style="text-align: center; padding: 20px;">Loading helpers & staff...</td></tr>
         </tbody>
       </table>
     </div>
@@ -65,7 +65,7 @@ async function loadRoomsAndStaff() {
             <h4 style="font-size: 16px; font-weight: 700;">${r.room_name}</h4>
             <span class="badge badge-info">${r.age_group}</span>
           </div>
-          <div style="font-size: 13px; color: var(--gray-500); margin-bottom: 12px;">Type: ${r.room_type || 'Classroom'}</div>
+          <div style="font-size: 13px; color: var(--gray-500); margin-bottom: 12px;">Type: ${r.room_type || 'Home Living Area'}</div>
           
           <div class="progress-bar-container">
             <div class="progress-bar ${r.occupancy_percentage >= 80 ? 'warning' : ''}" style="width: ${Math.min(r.occupancy_percentage, 100)}%;"></div>
@@ -76,7 +76,7 @@ async function loadRoomsAndStaff() {
             <span style="color: ${r.available_slots > 0 ? 'var(--success)' : 'var(--danger)'};">${r.available_slots} Slots Left</span>
           </div>
           <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--gray-200); font-size: 13px;">
-            <strong>Lead Educator:</strong> ${r.lead_educator}
+            <strong>Primary Caregiver / Didi:</strong> ${r.lead_educator}
           </div>
         </div>
       `).join("");
@@ -92,10 +92,10 @@ async function loadRoomsAndStaff() {
           <td><strong>#${s.staff_id}</strong></td>
           <td><strong>${s.first_name} ${s.last_name}</strong></td>
           <td><span class="badge badge-info">${s.role}</span></td>
-          <td>${s.room_name || '<em style="color:var(--gray-500)">General / Unassigned</em>'}</td>
+          <td>${s.room_name || '<em style="color:var(--gray-500)">All Home Spaces</em>'}</td>
           <td>${s.phone}</td>
           <td>${s.email || 'N/A'}</td>
-          <td>${s.qualification || 'Certified'}</td>
+          <td>${s.qualification || 'Experienced'}</td>
         </tr>
       `).join("");
     }

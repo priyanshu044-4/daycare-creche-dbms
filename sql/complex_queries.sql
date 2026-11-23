@@ -1,5 +1,5 @@
 -- ====================================================================
--- DAYCARE / CRECHE MANAGEMENT SYSTEM
+-- EARLYROOTS HOME-BASED CRECHE MANAGEMENT SYSTEM
 -- Complex DBMS Queries Demonstration (For Viva, Evaluation & Reports)
 -- ====================================================================
 

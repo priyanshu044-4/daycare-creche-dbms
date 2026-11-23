@@ -1,5 +1,5 @@
 -- ====================================================================
--- DAYCARE / CRECHE MANAGEMENT SYSTEM
+-- EARLYROOTS HOME-BASED CRECHE MANAGEMENT SYSTEM
 -- MySQL Stored Procedures (Encapsulated Business Operations & Transactions)
 -- ====================================================================
 
