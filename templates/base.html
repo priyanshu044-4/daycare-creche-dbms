@@ -8,97 +8,79 @@
 </head>
 <body>
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-icon">🌱</div>
-      <div>
-        <div class="brand-title">EarlyRoots</div>
-        <div class="brand-subtitle">Home Creche DBMS</div>
-      </div>
-    </div>
+  <!-- Top Navbar -->
+  <header class="top-navbar">
+    <div class="top-navbar-container">
+      <a href="{{ url_for('index') }}" class="brand">
+        <div class="brand-icon">🌱</div>
+        <div>
+          <div class="brand-title">EarlyRoots</div>
+          <div class="brand-subtitle">Home Creche DBMS</div>
+        </div>
+      </a>
 
-    <ul class="nav-menu">
-      <li class="nav-item">
+      <nav class="nav-menu">
         <a href="{{ url_for('index') }}" class="nav-link {% if request.path == '/' %}active{% endif %}">
           <span class="nav-icon">📊</span>
           <span>Dashboard</span>
         </a>
-      </li>
-      <li class="nav-item">
         <a href="{{ url_for('children_page') }}" class="nav-link {% if request.path == '/children' %}active{% endif %}">
           <span class="nav-icon">👶</span>
-          <span>Children Directory</span>
+          <span>Children</span>
         </a>
-      </li>
-      <li class="nav-item">
         <a href="{{ url_for('guardians_page') }}" class="nav-link {% if request.path == '/guardians' %}active{% endif %}">
           <span class="nav-icon">👨‍👩‍👧</span>
-          <span>Parents & Guardians</span>
+          <span>Parents</span>
         </a>
-      </li>
-      <li class="nav-item">
         <a href="{{ url_for('attendance_page') }}" class="nav-link {% if request.path == '/attendance' %}active{% endif %}">
           <span class="nav-icon">📋</span>
-          <span>Daily Attendance</span>
+          <span>Attendance</span>
         </a>
-      </li>
-      <li class="nav-item">
         <a href="{{ url_for('activities_page') }}" class="nav-link {% if request.path == '/activities' %}active{% endif %}">
           <span class="nav-icon">🥣</span>
-          <span>Activity Feed</span>
+          <span>Activities</span>
         </a>
-      </li>
-      <li class="nav-item">
         <a href="{{ url_for('rooms_staff_page') }}" class="nav-link {% if request.path == '/rooms-staff' %}active{% endif %}">
           <span class="nav-icon">🏡</span>
           <span>Care Spaces & Helpers</span>
         </a>
-      </li>
-      <li class="nav-item">
         <a href="{{ url_for('billing_page') }}" class="nav-link {% if request.path == '/billing' %}active{% endif %}">
           <span class="nav-icon">₹</span>
-          <span>Care Packages (INR)</span>
+          <span>Care Packages</span>
         </a>
-      </li>
-      <li class="nav-item">
         <a href="{{ url_for('sql_console_page') }}" class="nav-link {% if request.path == '/sql-console' %}active{% endif %}">
           <span class="nav-icon">⚡</span>
-          <span>Live SQL Console</span>
+          <span>SQL Console</span>
         </a>
-      </li>
-    </ul>
+      </nav>
 
-    <div class="sidebar-footer">
-      <div style="font-size: 11px; color: #fef08a; margin-bottom: 6px; font-weight: 700;">ACTIVE DATABASE</div>
-      <div class="db-pill">
-        <span class="db-dot"></span>
-        <span>{{ active_db }} Connected</span>
+      <div class="top-navbar-actions">
+        <div class="db-pill">
+          <span class="db-dot"></span>
+          <span>{{ active_db }} Connected</span>
+        </div>
+        <button class="btn btn-secondary btn-sm btn-nav-reset" onclick="resetDatabase()">🔄 Reset Demo DB</button>
       </div>
     </div>
-  </aside>
+  </header>
 
-  <!-- Main Content Wrapper -->
-  <div class="main-wrapper">
-    <!-- Topbar -->
-    <header class="topbar">
+  <!-- Page Header Sub-bar -->
+  <div class="page-header">
+    <div class="page-header-container">
       <div class="page-title-box">
         <h1>{% block page_title %}EarlyRoots Home-Based Family Creche{% endblock %}</h1>
         <p>{% block page_subtitle %}Relational Database Management System for Home Daycare & Childcare{% endblock %}</p>
       </div>
-      <div class="topbar-actions">
-        <span style="font-size: 13px; color: #0369a1; font-weight: 700; background: #f0f9ff; padding: 6px 12px; border-radius: 6px; border: 1px solid #bae6fd;">
-          📅 {{ today_date }}
-        </span>
-        <button class="btn btn-secondary btn-sm" onclick="resetDatabase()">🔄 Reset Demo DB</button>
+      <div class="page-header-meta">
+        <span class="date-badge">📅 {{ today_date }}</span>
       </div>
-    </header>
-
-    <!-- Page Body -->
-    <main class="content-container">
-      {% block content %}{% endblock %}
-    </main>
+    </div>
   </div>
+
+  <!-- Page Body -->
+  <main class="content-container">
+    {% block content %}{% endblock %}
+  </main>
 
   <!-- Toast Notification Container -->
   <div id="toast-container" class="toast-container"></div>
