@@ -2,10 +2,11 @@
 
 ---
 
-# **KILKARI: DAYCARE & CRECHE MANAGEMENT SYSTEM**
+# **EARLYROOTS: DAYCARE & CRECHE MANAGEMENT SYSTEM**
 
 **Course:** Database Management Systems (DBMS) Laboratory  
 **Topic:** Daycare / Creche Management System  
+**Brand Identity:** EarlyRoots (🌱)  
 **Technology Stack:**
 - **Frontend:** HTML5, CSS3 (Indian Warm Palette), JavaScript (Vanilla ES6, Fetch API)
 - **Backend:** Python 3 (Flask RESTful Web Framework)
@@ -19,7 +20,7 @@
 
 Modern early childhood development centers and daycare creches in India require meticulous record management to ensure child safety, real-time parent communication, regulatory compliance, and transparent financial billing. Traditional paper-based registers or disjointed spreadsheets often suffer from data redundancy, inconsistent updates, loss of critical allergy records, and lack of referential integrity.
 
-This project, titled **"Kilkari: Creche & Daycare Management System"**, presents a relational database solution engineered to centralize nursery and playgroup operations. The system systematically models children, parents/guardians, certified educators, classrooms with strict capacity thresholds (such as *Shishu Vatika*, *Nanhe Kadam*, *Bal Vatika*, and *Tarang Prep*), daily attendance registers, nutrition/nap activity tracking (such as Khichdi, Idli, and ragi meal schedules), and monthly tuition billing in Indian Rupees (₹). 
+This project, titled **"EarlyRoots: Daycare & Creche Management System"**, presents a relational database solution engineered to centralize nursery and playgroup operations. The system systematically models children, parents/guardians, certified educators, classrooms with strict capacity thresholds (such as *Shishu Vatika*, *Nanhe Kadam*, *Bal Vatika*, and *Tarang Prep*), daily attendance registers, nutrition/nap activity tracking (such as Khichdi, Idli, and ragi meal schedules), and monthly tuition billing in Indian Rupees (₹). 
 
 By enforcing rigorous DBMS principles—such as Third Normal Form (3NF) relational decomposition, foreign key cascade/restrict integrity, automated database triggers for overfill prevention and payment status synchronization, parameterized stored procedures, and complex SQL views—the application delivers a tamper-resistant, ACID-compliant, and high-performance management architecture paired with an intuitive, culturally warm web interface.
 

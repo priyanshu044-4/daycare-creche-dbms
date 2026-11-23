@@ -1,10 +1,12 @@
-# TinySteps: Daycare & Creche Management System
+# EarlyRoots: Daycare & Creche Management System
 ### A Full-Featured Relational Database Management Systems (DBMS) Mini Project
 
 > **Topic:** Daycare / Creche Management System  
+> **Brand Name:** EarlyRoots (🌱)  
 > **Frontend:** HTML5, CSS3, Modern JavaScript (Vanilla ES6, Fetch API)  
 > **Backend:** Python Flask  
 > **Database:** Dual-Engine Support (MySQL / MariaDB and Zero-Setup Embedded SQLite)  
+> **Currency:** Indian Rupee (₹ INR)  
 > **DBMS Core Concepts:** Primary & Foreign Keys, 1NF-3NF Normalization, Multi-Table JOINs, Virtual Views, Database Triggers, Stored Procedures, ACID Transactions, and Audit Trail.
 
 ---

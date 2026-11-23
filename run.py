@@ -11,8 +11,8 @@ def open_browser():
 
 if __name__ == "__main__":
     print("=" * 70)
-    print("   DAYCARE & CRECHE MANAGEMENT SYSTEM - DBMS MINI PROJECT")
-    print("   Technology: HTML, CSS, JavaScript, Python Flask, MySQL / SQLite")
+    print("   EARLYROOTS: DAYCARE & CRECHE MANAGEMENT SYSTEM - DBMS MINI PROJECT")
+    print("   Technology: HTML, CSS, JavaScript, Python Flask, MySQL / SQLite (INR ₹)")
     print("=" * 70)
     
     # Initialize DB & Seed Data

@@ -1,5 +1,5 @@
 /**
- * KILKARI CRECHE & DAYCARE MANAGEMENT SYSTEM
+ * EARLYROOTS CRECHE & DAYCARE MANAGEMENT SYSTEM
  * Frontend JavaScript Application Logic
  * Supports Indian Names & INR (₹) Currency
  */

@@ -466,14 +466,14 @@ def seed_sqlite():
     INSERT INTO staff (first_name, last_name, role, phone, email, qualification, assigned_room_id, hire_date, salary)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, [
-        ('Sunita', 'Deshmukh', 'Administrator', '9820112233', 'sunita.admin@kilkari.in', 'M.Ed Early Childhood Education', None, '2022-01-15', 55000),
-        ('Anita', 'Menon', 'Lead Educator', '9820112234', 'anita.m@kilkari.in', 'B.Ed & Montessori Certified', 1, '2022-03-01', 42000),
-        ('Rajeshwari', 'Pillai', 'Lead Educator', '9820112235', 'rajeshwari.p@kilkari.in', 'Diploma in Child Psychology', 2, '2022-06-10', 40000),
-        ('Meenakshi', 'Sundaram', 'Lead Educator', '9820112236', 'meenakshi.s@kilkari.in', 'B.Sc Child Development', 3, '2023-01-10', 41000),
-        ('Farhan', 'Akhtar', 'Lead Educator', '9820112237', 'farhan.a@kilkari.in', 'B.A Primary Education', 4, '2023-04-15', 39000),
-        ('Sister Mary', 'Joseph', 'Nurse', '9820112238', 'mary.nurse@kilkari.in', 'Registered Pediatric Nurse (B.Sc Nursing)', None, '2022-08-01', 45000),
-        ('Lakshmi', 'Bai', 'Caregiver', '9820112239', 'lakshmi.b@kilkari.in', 'Certified Child Care Attendant', 2, '2023-09-01', 30000),
-        ('Geeta', 'Devi', 'Caregiver', '9820112240', 'geeta.d@kilkari.in', 'CPR & First Aid Certified', 1, '2023-11-15', 30000)
+        ('Sunita', 'Deshmukh', 'Administrator', '9820112233', 'sunita.admin@earlyroots.in', 'M.Ed Early Childhood Education', None, '2022-01-15', 55000),
+        ('Anita', 'Menon', 'Lead Educator', '9820112234', 'anita.m@earlyroots.in', 'B.Ed & Montessori Certified', 1, '2022-03-01', 42000),
+        ('Rajeshwari', 'Pillai', 'Lead Educator', '9820112235', 'rajeshwari.p@earlyroots.in', 'Diploma in Child Psychology', 2, '2022-06-10', 40000),
+        ('Meenakshi', 'Sundaram', 'Lead Educator', '9820112236', 'meenakshi.s@earlyroots.in', 'B.Sc Child Development', 3, '2023-01-10', 41000),
+        ('Farhan', 'Akhtar', 'Lead Educator', '9820112237', 'farhan.a@earlyroots.in', 'B.A Primary Education', 4, '2023-04-15', 39000),
+        ('Sister Mary', 'Joseph', 'Nurse', '9820112238', 'mary.nurse@earlyroots.in', 'Registered Pediatric Nurse (B.Sc Nursing)', None, '2022-08-01', 45000),
+        ('Lakshmi', 'Bai', 'Caregiver', '9820112239', 'lakshmi.b@earlyroots.in', 'Certified Child Care Attendant', 2, '2023-09-01', 30000),
+        ('Geeta', 'Devi', 'Caregiver', '9820112240', 'geeta.d@earlyroots.in', 'CPR & First Aid Certified', 1, '2023-11-15', 30000)
     ])
 
     # 3. Guardians (Indian Parents & Metro Addresses)
