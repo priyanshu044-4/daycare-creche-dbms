@@ -5,12 +5,12 @@
 
 USE daycare_db;
 
--- 1. Insert Classrooms / Pods (Indian Preschool naming)
+-- 1. Insert Classrooms / Pods (Theme 5: Modern Montessori & Nordic Style)
 INSERT INTO rooms (room_name, age_group, capacity, room_type) VALUES
-('Shishu Vatika', '0-12 months', 8, 'Infant Nest'),
-('Nanhe Kadam', '1-2 years', 12, 'Toddler Playgroup'),
-('Bal Vatika', '2-3.5 years', 15, 'Nursery Learning Pod'),
-('Tarang Prep', '3.5-5 years', 18, 'Kindergarten Activity Lab');
+('The Nest', '0-12 months', 8, 'Infant Nursery'),
+('The Burrow', '1-2 years', 12, 'Toddler Sensory Playroom'),
+('The Hive', '2-3.5 years', 15, 'Collaborative Learning Pod'),
+('The Discovery Lab', '3.5-5 years', 18, 'Kindergarten Activity Lab');
 
 -- 2. Insert Staff Members (Indian Educators & Healthcare Staff)
 INSERT INTO staff (first_name, last_name, role, phone, email, qualification, assigned_room_id, hire_date, salary) VALUES
@@ -73,10 +73,10 @@ INSERT INTO allergies_medical (child_id, allergen_type, allergen_name, severity,
 
 -- 7. Fee Plans (in INR ₹)
 INSERT INTO fee_plans (plan_name, description, frequency, amount) VALUES
-('Shishu Full-Day Infant Care', 'Full daycare with nutrition, warm oil massage, diapering, and nap logs (8am-6pm)', 'Monthly', 14500.00),
-('Nanhe Kadam Toddler Playgroup', 'Structured motor skills, sensory play, fresh hot lunch, and nap (8am-5pm)', 'Monthly', 11500.00),
-('Bal Vatika Half-Day Program', 'Morning early learning, music, and socialization (8:30am-12:30pm)', 'Monthly', 7500.00),
-('Tarang Pre-K Extended Day', 'School readiness curriculum with evening activity club (8am-6pm)', 'Monthly', 12500.00);
+('The Nest Full-Day Infant Care', 'Full daycare with nutrition, warm oil massage, diapering, and nap logs (8am-6pm)', 'Monthly', 14500.00),
+('The Burrow Toddler Playgroup', 'Structured motor skills, sensory play, fresh hot lunch, and nap (8am-5pm)', 'Monthly', 11500.00),
+('The Hive Half-Day Program', 'Morning early learning, music, and socialization (8:30am-12:30pm)', 'Monthly', 7500.00),
+('The Discovery Lab Extended Day', 'School readiness curriculum with evening activity club (8am-6pm)', 'Monthly', 12500.00);
 
 -- 8. Invoices (in INR ₹)
 INSERT INTO invoices (child_id, plan_id, billing_period, total_amount, discount_amount, net_amount, due_date, status) VALUES

@@ -453,12 +453,12 @@ def seed_sqlite():
         conn.close()
         return
 
-    # 1. Rooms (Indian Preschool Pods)
+    # 1. Rooms (Theme 5: Modern Montessori & Nordic Style)
     cursor.executemany("INSERT INTO rooms (room_name, age_group, capacity, room_type) VALUES (?, ?, ?, ?)", [
-        ('Shishu Vatika', '0-12 months', 8, 'Infant Nest'),
-        ('Nanhe Kadam', '1-2 years', 12, 'Toddler Playgroup'),
-        ('Bal Vatika', '2-3.5 years', 15, 'Nursery Learning Pod'),
-        ('Tarang Prep', '3.5-5 years', 18, 'Kindergarten Activity Lab')
+        ('The Nest', '0-12 months', 8, 'Infant Nursery'),
+        ('The Burrow', '1-2 years', 12, 'Toddler Sensory Playroom'),
+        ('The Hive', '2-3.5 years', 15, 'Collaborative Learning Pod'),
+        ('The Discovery Lab', '3.5-5 years', 18, 'Kindergarten Activity Lab')
     ])
 
     # 2. Staff (Indian Educators, Nurse & Caregivers)
@@ -545,10 +545,10 @@ def seed_sqlite():
     INSERT INTO fee_plans (plan_name, description, frequency, amount)
     VALUES (?, ?, ?, ?)
     """, [
-        ('Shishu Full-Day Infant Care', 'Full daycare with nutrition, warm oil massage, diapering, and nap logs (8am-6pm)', 'Monthly', 14500.0),
-        ('Nanhe Kadam Toddler Playgroup', 'Structured motor skills, sensory play, fresh hot lunch, and nap (8am-5pm)', 'Monthly', 11500.0),
-        ('Bal Vatika Half-Day Program', 'Morning early learning, music, and socialization (8:30am-12:30pm)', 'Monthly', 7500.0),
-        ('Tarang Pre-K Extended Day', 'School readiness curriculum with evening activity club (8am-6pm)', 'Monthly', 12500.0)
+        ('The Nest Full-Day Infant Care', 'Full daycare with nutrition, warm oil massage, diapering, and nap logs (8am-6pm)', 'Monthly', 14500.0),
+        ('The Burrow Toddler Playgroup', 'Structured motor skills, sensory play, fresh hot lunch, and nap (8am-5pm)', 'Monthly', 11500.0),
+        ('The Hive Half-Day Program', 'Morning early learning, music, and socialization (8:30am-12:30pm)', 'Monthly', 7500.0),
+        ('The Discovery Lab Extended Day', 'School readiness curriculum with evening activity club (8am-6pm)', 'Monthly', 12500.0)
     ])
 
     # 8. Invoices (in INR ₹)
@@ -606,7 +606,7 @@ def seed_sqlite():
     VALUES (?, ?, ?, ?, ?, ?, ?)
     """, [
         (1, today_str, 'Meal', '09:00', '09:25', 'Drank 150ml warm soy milk formula peacefully', 8),
-        (1, today_str, 'Nap', '10:00', '11:15', 'Restful morning sleep in Shishu crib #2', 8),
+        (1, today_str, 'Nap', '10:00', '11:15', 'Restful morning sleep in The Nest crib #2', 8),
         (2, today_str, 'Play/Learning', '09:30', '10:30', 'Clay modeling and Diya painting activity', 4),
         (3, today_str, 'Meal', '09:15', '09:45', 'Ate warm Moong Dal Khichdi with pure cow ghee', 7),
         (5, today_str, 'Diaper/Potty', '09:30', '09:40', 'Diaper change, rash cream applied', 2),
