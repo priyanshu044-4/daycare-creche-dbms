@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Activity Logs - Daycare DBMS{% endblock %}
+{% block page_title %}Daily Child Activities{% endblock %}
+{% block page_subtitle %}Chronological activity feed for meals, naps, play sessions, and health incidents{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <span>🍎</span> Child Activity Timeline (view_daily_activity_feed)
+    </div>
+    <button class="btn btn-primary" onclick="openModal('modal-log-activity')">
+      <span>+</span> Log New Activity
+    </button>
+  </div>
+  <div class="card-body">
+    <div id="activity-feed">
+      <p style="color: var(--gray-500);">Loading activity stream...</p>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Log Activity -->
+<div id="modal-log-activity" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Log Child Daily Activity</h3>
+      <button class="modal-close" onclick="closeModal('modal-log-activity')">&times;</button>
+    </div>
+    <form onsubmit="handleLogActivity(event)">
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Child *</label>
+          <select name="child_id" class="select-control" required style="width: 100%;">
+            {% for c in children %}
+              <option value="{{ c.child_id }}">{{ c.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Activity Type *</label>
+            <select name="activity_type" class="select-control" required>
+              <option value="Meal">Meal / Nutrition</option>
+              <option value="Nap">Nap / Sleep</option>
+              <option value="Play/Learning">Play & Learning</option>
+              <option value="Diaper/Potty">Diaper / Potty</option>
+              <option value="Medication">Medication Administered</option>
+              <option value="Incident">Incident / Alert</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Caregiver / Staff</label>
+            <select name="staff_id" class="select-control">
+              {% for s in staff %}
+                <option value="{{ s.staff_id }}">{{ s.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Start Time *</label>
+            <input type="time" name="start_time" class="input-control" required value="09:00">
+          </div>
+          <div class="form-group">
+            <label>End Time (Optional)</label>
+            <input type="time" name="end_time" class="input-control">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Description & Notes *</label>
+          <textarea name="description" class="input-control" rows="3" required placeholder="Details about food intake, nap quality, or activities completed..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-log-activity')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Activity Log</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

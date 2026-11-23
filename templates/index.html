@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Kilkari Creche DBMS{% endblock %}
+{% block page_title %}Dashboard & Analytics Overview{% endblock %}
+{% block page_subtitle %}Classroom occupancy, attendance metrics, and automated SQL trigger audit logs{% endblock %}
+
+{% block content %}
+<div id="dashboard-stats">
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon-wrapper icon-purple">👶</div>
+      <div class="stat-info">
+        <h3 id="stat-children">--</h3>
+        <span>Enrolled Children</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon-wrapper icon-emerald">📋</div>
+      <div class="stat-info">
+        <h3 id="stat-present">--</h3>
+        <span>Present Today</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon-wrapper icon-blue">👩‍🏫</div>
+      <div class="stat-info">
+        <h3 id="stat-staff">--</h3>
+        <span>Active Staff & Teachers</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon-wrapper icon-amber">₹</div>
+      <div class="stat-info">
+        <h3 id="stat-dues">--</h3>
+        <span>Pending Tuition Dues (INR)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Two Column Grid: Room Utilization & Quick Actions -->
+  <div class="two-col-grid">
+    <!-- Room Utilization Summary (View 2) -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span>🏫</span> Classroom Capacity & Utilization (view_room_summary)
+        </div>
+        <a href="{{ url_for('rooms_staff_page') }}" class="btn btn-secondary btn-sm">View All Rooms</a>
+      </div>
+      <div class="card-body" id="dashboard-rooms">
+        <p style="color: var(--gray-500);">Loading classroom capacity metrics...</p>
+      </div>
+    </div>
+
+    <!-- Quick Shortcuts / System Highlights -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span>🚀</span> Quick Operations
+        </div>
+      </div>
+      <div class="card-body">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <a href="{{ url_for('children_page') }}" class="btn btn-secondary" style="padding: 16px; flex-direction: column; text-align: center;">
+            <span style="font-size: 24px;">👶</span>
+            <span>Enroll Child</span>
+          </a>
+          <a href="{{ url_for('attendance_page') }}" class="btn btn-secondary" style="padding: 16px; flex-direction: column; text-align: center;">
+            <span style="font-size: 24px;">📋</span>
+            <span>Daily Register</span>
+          </a>
+          <a href="{{ url_for('activities_page') }}" class="btn btn-secondary" style="padding: 16px; flex-direction: column; text-align: center;">
+            <span style="font-size: 24px;">🥣</span>
+            <span>Log Meal & Nap</span>
+          </a>
+          <a href="{{ url_for('billing_page') }}" class="btn btn-secondary" style="padding: 16px; flex-direction: column; text-align: center;">
+            <span style="font-size: 24px;">₹</span>
+            <span>Collect Fee (UPI/Card)</span>
+          </a>
+        </div>
+
+        <div style="margin-top: 20px; padding: 14px; background: #fffbeb; border-radius: 8px; font-size: 13px; color: #92400e; border: 1px solid #fde68a;">
+          <strong>Core DBMS Concepts Implemented:</strong>
+          <ul style="margin: 6px 0 0 18px; line-height: 1.5;">
+            <li>Normalized Relations in 3NF (Children, Guardians, Allergies, Rooms, Invoices)</li>
+            <li>Automated SQL Triggers: Room capacity enforcement & payment recalculation</li>
+            <li>Database Views for live aggregation and reporting</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Audit Logs Table (Live DBMS Triggers Output) -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <span>⚡</span> Automated Trigger Audit Trail (audit_logs table)
+      </div>
+      <span style="font-size: 13px; color: var(--gray-500);">Auto-inserted by database triggers on INSERT and UPDATE</span>
+    </div>
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Event Action</th>
+            <th>Target Table</th>
+            <th>Trigger Audit Description</th>
+            <th>Recorded Timestamp</th>
+          </tr>
+        </thead>
+        <tbody id="dashboard-logs">
+          <tr><td colspan="4" style="text-align: center; padding: 20px;">Loading trigger audit logs...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Live SQL Query Console - Daycare DBMS{% endblock %}
+{% block page_title %}Interactive SQL Console & DBMS Explorer{% endblock %}
+{% block page_subtitle %}Execute custom SQL queries, inspect database views, and test triggers live{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <span>⚡</span> SQL Query Editor
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn btn-secondary btn-sm" onclick="document.getElementById('sql-query-input').value = ''">Clear Editor</button>
+      <button class="btn btn-primary btn-sm" onclick="executeSql()">▶ Run Query (Ctrl+Enter)</button>
+    </div>
+  </div>
+  <div class="card-body">
+    <!-- Preset Query Selector -->
+    <div class="form-group">
+      <label>Load Preset Academic DBMS Query:</label>
+      <select id="sql-presets-select" class="select-control" style="width: 100%;" onchange="handlePresetSelect(event)">
+        <option value="">Loading preset queries...</option>
+      </select>
+      <p id="sql-query-desc" style="font-size: 13px; color: var(--primary); margin-top: 6px; font-weight: 500;"></p>
+    </div>
+
+    <!-- SQL Textarea Editor -->
+    <div class="form-group">
+      <label>SQL Statement (Runs against {{ active_db }}):</label>
+      <textarea id="sql-query-input" class="sql-editor" placeholder="SELECT * FROM view_children_directory;"></textarea>
+    </div>
+
+    <!-- Action Bar -->
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span id="sql-meta-box" style="font-size: 13px; color: var(--gray-500); font-weight: 500;">Ready to execute</span>
+      <button class="btn btn-success" onclick="executeSql()">Execute SQL Query</button>
+    </div>
+
+    <!-- Results Box -->
+    <div style="margin-top: 24px;">
+      <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 8px; color: var(--gray-900);">Query Output Result:</h4>
+      <div id="sql-output-box" class="sql-result-box">
+        <p style="padding: 20px; color: var(--gray-500); text-align: center;">Execute a query above to see dynamic tabular output.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Database Schema Reference Card -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <span>📚</span> Database Schema Quick Reference
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+      <div style="background: var(--gray-50); padding: 14px; border-radius: 8px; font-size: 13px;">
+        <strong style="color: var(--primary);">Base Relational Tables:</strong>
+        <ul style="margin: 6px 0 0 16px; line-height: 1.6;">
+          <li><code>rooms</code> (room_id, room_name, capacity)</li>
+          <li><code>staff</code> (staff_id, name, role, salary)</li>
+          <li><code>children</code> (child_id, name, dob, room_id)</li>
+          <li><code>guardians</code> (guardian_id, name, phone)</li>
+          <li><code>child_guardians</code> (child_id, guardian_id)</li>
+          <li><code>allergies_medical</code> (allergy_id, child_id)</li>
+          <li><code>attendance</code> (attendance_id, child_id, date)</li>
+          <li><code>daily_activities</code> (activity_id, child_id)</li>
+          <li><code>fee_plans</code> (plan_id, plan_name, amount)</li>
+          <li><code>invoices</code> (invoice_id, child_id, net_amount)</li>
+          <li><code>payments</code> (payment_id, invoice_id, amount)</li>
+          <li><code>audit_logs</code> (log_id, action_type, details)</li>
+        </ul>
+      </div>
+
+      <div style="background: var(--gray-50); padding: 14px; border-radius: 8px; font-size: 13px;">
+        <strong style="color: var(--secondary);">Database Virtual Views:</strong>
+        <ul style="margin: 6px 0 0 16px; line-height: 1.6;">
+          <li><code>view_children_directory</code></li>
+          <li><code>view_room_summary</code></li>
+          <li><code>view_pending_dues</code></li>
+          <li><code>view_daily_attendance_today</code></li>
+          <li><code>view_daily_activity_feed</code></li>
+        </ul>
+        <strong style="color: var(--success); display: block; margin-top: 10px;">Automated Triggers:</strong>
+        <ul style="margin: 6px 0 0 16px; line-height: 1.6;">
+          <li><code>trg_enforce_room_capacity</code> (BEFORE INSERT)</li>
+          <li><code>trg_child_audit_insert</code> (AFTER INSERT)</li>
+          <li><code>trg_payment_update_invoice</code> (AFTER INSERT)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Shortcut: Ctrl+Enter executes SQL
+document.getElementById("sql-query-input").addEventListener("keydown", function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+    executeSql();
+  }
+});
+</script>
+{% endblock %}

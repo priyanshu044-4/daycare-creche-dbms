@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.pyc
+daycare.db
+cloudflared.exe
+.DS_Store

@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Fees & Invoices (INR) - Kilkari Creche DBMS{% endblock %}
+{% block page_title %}Tuition Fees, Invoices & Payments (INR ₹){% endblock %}
+{% block page_subtitle %}Manage creche tuition fee plans, invoices, and trigger-automated payment ledgers in Indian Rupees{% endblock %}
+
+{% block content %}
+<!-- Tuition Fee Plans Overview -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <span>📋</span> Sanctioned Monthly Fee Plans (fee_plans table)
+    </div>
+    <button class="btn btn-primary" onclick="openModal('modal-create-invoice')">
+      <span>+</span> Generate New Tuition Invoice
+    </button>
+  </div>
+  <div class="card-body">
+    <div class="stats-grid">
+      {% for p in plans %}
+        <div style="background: var(--white); border: 1px solid #f0e6dc; border-radius: 10px; padding: 18px; box-shadow: var(--shadow-sm);">
+          <h4 style="font-size: 15px; font-weight: 700; color: #1e1b4b;">{{ p.plan_name }}</h4>
+          <div style="font-size: 25px; font-weight: 800; color: var(--primary); margin: 8px 0;">₹{{ "{:,.2f}".format(p.amount) }}</div>
+          <div style="font-size: 12px; color: var(--gray-500);">Billed Monthly per Child</div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Invoices Ledger -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <span>💳</span> Tuition Invoices Ledger
+    </div>
+    <span style="font-size: 13px; color: var(--gray-500);">Trigger <code>trg_payment_update_invoice</code> auto-calculates total paid & status</span>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Invoice ID</th>
+            <th>Child Name</th>
+            <th>Plan Category</th>
+            <th>Billing Period</th>
+            <th>Net Bill (INR)</th>
+            <th>Paid to Date</th>
+            <th>Status</th>
+            <th>Due Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="invoices-table-body">
+          <tr><td colspan="9" style="text-align: center; padding: 20px;">Loading invoices...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Generate Invoice -->
+<div id="modal-create-invoice" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Generate Tuition Invoice</h3>
+      <button class="modal-close" onclick="closeModal('modal-create-invoice')">&times;</button>
+    </div>
+    <form onsubmit="handleCreateInvoice(event)">
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Select Child *</label>
+          <select name="child_id" class="select-control" required style="width: 100%;">
+            {% for c in children %}
+              <option value="{{ c.child_id }}">{{ c.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Tuition Plan *</label>
+          <select name="plan_id" class="select-control" required style="width: 100%;">
+            {% for p in plans %}
+              <option value="{{ p.plan_id }}">{{ p.plan_name }} (₹{{ "{:,.2f}".format(p.amount) }})</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Billing Period *</label>
+            <input type="text" name="billing_period" class="input-control" required value="November 2026">
+          </div>
+          <div class="form-group">
+            <label>Total Plan Fee (₹ INR) *</label>
+            <input type="number" step="1" name="total_amount" class="input-control" required value="11500">
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Sibling / Concession Discount (₹)</label>
+            <input type="number" step="1" name="discount_amount" class="input-control" value="0">
+          </div>
+          <div class="form-group">
+            <label>Due Date *</label>
+            <input type="date" name="due_date" class="input-control" required value="{{ today_date }}">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-create-invoice')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Create Invoice</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Record Payment -->
+<div id="modal-record-payment" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Record Fee Payment Receipt</h3>
+      <button class="modal-close" onclick="closeModal('modal-record-payment')">&times;</button>
+    </div>
+    <form onsubmit="handleRecordPayment(event)">
+      <input type="hidden" name="invoice_id" id="pay-invoice-id">
+      <div class="modal-body">
+        <div style="background: #fffbeb; padding: 14px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #fde68a;">
+          <strong id="pay-child-name" style="color: #92400e; font-size: 15px;">Child Name</strong>
+          <div style="font-size: 12px; color: #78350f; margin-top: 4px;">Database trigger automatically verifies if cumulative payments equal or exceed the invoice bill amount!</div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Amount to Pay (₹ INR) *</label>
+            <input type="number" step="1" name="amount_paid" id="pay-amount" class="input-control" required>
+          </div>
+          <div class="form-group">
+            <label>Payment Method *</label>
+            <select name="payment_mode" class="select-control" required>
+              <option value="UPI">UPI (Google Pay / PhonePe / Paytm)</option>
+              <option value="NetBanking">Net Banking (IMPS / NEFT)</option>
+              <option value="Card">Credit / Debit Card</option>
+              <option value="Cash">Cash at Reception</option>
+              <option value="Cheque">Bank Cheque</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Transaction / UTR Reference Code</label>
+          <input type="text" name="transaction_ref" class="input-control" placeholder="e.g. UPI/2026/GPay/98412 or Cheque #8812">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-record-payment')">Cancel</button>
+        <button type="submit" class="btn btn-success">Record Payment (Fires Trigger)</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

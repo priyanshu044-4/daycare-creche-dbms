@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Daily Attendance - Daycare DBMS{% endblock %}
+{% block page_title %}Daily Attendance Tracker{% endblock %}
+{% block page_subtitle %}Real-time student check-in, check-out, temperature logs, and absence tracking{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <span>📋</span> Student Attendance Register
+    </div>
+    <span style="font-size: 13px; color: var(--gray-500);">Live synchronization with attendance table</span>
+  </div>
+  <div class="card-body">
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div>
+        <label style="font-size: 12px; font-weight: 600; color: var(--gray-500); display: block; margin-bottom: 4px;">Date</label>
+        <input type="date" id="attendance-date" class="input-control" value="{{ today_date }}" onchange="loadAttendance()">
+      </div>
+
+      <div>
+        <label style="font-size: 12px; font-weight: 600; color: var(--gray-500); display: block; margin-bottom: 4px;">Classroom</label>
+        <select id="attendance-room" class="select-control" onchange="loadAttendance()">
+          <option value="">All Rooms</option>
+          {% for r in rooms %}
+            <option value="{{ r.room_id }}">{{ r.room_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div style="align-self: flex-end;">
+        <button class="btn btn-secondary" onclick="loadAttendance()">Refresh</button>
+      </div>
+    </div>
+
+    <!-- Attendance Table -->
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Child Name</th>
+            <th>Classroom</th>
+            <th>Status</th>
+            <th>Check In</th>
+            <th>Check Out</th>
+            <th>Temp (°F)</th>
+            <th>Quick Actions</th>
+          </tr>
+        </thead>
+        <tbody id="attendance-table-body">
+          <tr><td colspan="8" style="text-align: center; padding: 20px;">Loading attendance records...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}Children Directory - Kilkari Creche DBMS{% endblock %}
+{% block page_title %}Children Management Register{% endblock %}
+{% block page_subtitle %}Manage child admissions, allergy profiles, emergency contacts, and classroom pods{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <span>👶</span> Registered Children Directory (view_children_directory)
+    </div>
+    <button class="btn btn-primary" onclick="openModal('modal-enroll-child')">
+      <span>+</span> New Child Admission
+    </button>
+  </div>
+  <div class="card-body">
+    <!-- Filter Controls -->
+    <div class="filter-bar">
+      <select id="filter-room" class="select-control" onchange="loadChildren()">
+        <option value="">All Classrooms / Pods</option>
+        {% for r in rooms %}
+          <option value="{{ r.room_id }}">{{ r.room_name }} (Capacity: {{ r.capacity }})</option>
+        {% endfor %}
+      </select>
+
+      <select id="filter-status" class="select-control" onchange="loadChildren()">
+        <option value="">All Statuses</option>
+        <option value="Active" selected>Active Only</option>
+        <option value="Graduated">Graduated</option>
+        <option value="Withdrawn">Withdrawn</option>
+        <option value="On Leave">On Leave</option>
+      </select>
+
+      <button class="btn btn-secondary btn-sm" onclick="loadChildren()">Refresh</button>
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Child Name</th>
+            <th>Classroom Pod</th>
+            <th>Primary Guardian</th>
+            <th>Medical / Allergy Alert</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="children-table-body">
+          <tr><td colspan="7" style="text-align: center; padding: 20px;">Loading children records...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Enroll New Child -->
+<div id="modal-enroll-child" class="modal-overlay">
+  <div class="modal-box modal-large">
+    <div class="modal-header">
+      <h3>New Child Admission</h3>
+      <button class="modal-close" onclick="closeModal('modal-enroll-child')">&times;</button>
+    </div>
+    <form onsubmit="handleEnrollChild(event)">
+      <div class="modal-body">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>First Name *</label>
+            <input type="text" name="first_name" class="input-control" required placeholder="e.g. Aarav / Saanvi">
+          </div>
+          <div class="form-group">
+            <label>Last Name *</label>
+            <input type="text" name="last_name" class="input-control" required placeholder="e.g. Sharma / Patel">
+          </div>
+        </div>
+
+        <div class="form-grid-3">
+          <div class="form-group">
+            <label>Date of Birth *</label>
+            <input type="date" name="dob" class="input-control" required>
+          </div>
+          <div class="form-group">
+            <label>Gender *</label>
+            <select name="gender" class="select-control" required>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Blood Group</label>
+            <select name="blood_group" class="select-control">
+              <option value="">Select Blood Group</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Assign Classroom Pod * (Enforced by Trigger)</label>
+            <select name="room_id" class="select-control" required>
+              {% for r in rooms %}
+                <option value="{{ r.room_id }}">{{ r.room_name }} ({{ r.age_group }}) - Cap: {{ r.capacity }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Link Primary Guardian</label>
+            <select name="guardian_id" class="select-control">
+              <option value="">-- Choose Existing Parent / Guardian --</option>
+              {% for g in guardians %}
+                <option value="{{ g.guardian_id }}">{{ g.first_name }} {{ g.last_name }} ({{ g.relationship }}) - +91 {{ g.phone }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Emergency Contact Mobile Number *</label>
+          <input type="tel" name="emergency_contact_phone" class="input-control" required placeholder="e.g. 9811223301">
+        </div>
+
+        <div class="form-group">
+          <label>Medical Restrictions & Habits</label>
+          <textarea name="notes" class="input-control" rows="2" placeholder="Dietary habits, soothing routines, or special requests..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-enroll-child')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Enroll & Save Record</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: View Child Profile -->
+<div id="modal-view-child" class="modal-overlay">
+  <div class="modal-box modal-large">
+    <div class="modal-header">
+      <h3 id="modal-child-name">Child Profile</h3>
+      <button class="modal-close" onclick="closeModal('modal-view-child')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="modal-child-info"></div>
+
+      <div style="margin-top: 20px;">
+        <h4 style="font-size: 15px; margin-bottom: 8px; color: #1e1b4b;">Associated Guardians & Authorized Pickup</h4>
+        <ul id="modal-child-guardians" style="list-style: none; padding-left: 0;"></ul>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <h4 style="font-size: 15px; margin-bottom: 8px; color: #1e1b4b;">Allergies & Medical Action Protocols</h4>
+        <div id="modal-child-allergies"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="closeModal('modal-view-child')">Close</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
