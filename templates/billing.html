@@ -18,8 +18,8 @@
   <div class="card-body">
     <div class="stats-grid">
       {% for p in plans %}
-        <div style="background: var(--white); border: 1px solid #f0e6dc; border-radius: 10px; padding: 18px; box-shadow: var(--shadow-sm);">
-          <h4 style="font-size: 15px; font-weight: 700; color: #1e1b4b;">{{ p.plan_name }}</h4>
+        <div style="background: var(--white); border: 1px solid #e0f2fe; border-radius: 10px; padding: 18px; box-shadow: var(--shadow-sm);">
+          <h4 style="font-size: 15px; font-weight: 700; color: #0c4a6e;">{{ p.plan_name }}</h4>
           <div style="font-size: 25px; font-weight: 800; color: var(--primary); margin: 8px 0;">₹{{ "{:,.2f}".format(p.amount) }}</div>
           <div style="font-size: 12px; color: var(--gray-500);">Monthly Care per Child</div>
         </div>
