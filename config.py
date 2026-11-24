@@ -14,4 +14,11 @@ class Config:
     MYSQL_DB = os.environ.get("MYSQL_DB", "daycare_db")
     
     # SQLite Settings (zero-setup fallback)
-    SQLITE_PATH = os.path.join(os.path.dirname(__file__), "daycare.db")
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    BUNDLED_DB = os.path.join(BASE_DIR, "daycare.db")
+    
+    # In Vercel / AWS Lambda, use writable /tmp directory
+    if os.environ.get("VERCEL"):
+        SQLITE_PATH = os.path.join("/tmp", "daycare.db")
+    else:
+        SQLITE_PATH = BUNDLED_DB

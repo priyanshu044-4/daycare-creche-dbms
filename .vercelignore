@@ -1,0 +1,7 @@
+.venv
+__pycache__
+*.pyc
+.git
+.github
+cloudflared.exe
+test_app.py

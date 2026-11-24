@@ -1,10 +1,16 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 from datetime import datetime, date
 import random
+import os
 from config import Config
 from database import db, init_database, get_active_db_type
 
-app = Flask(__name__)
+base_dir = os.path.dirname(os.path.abspath(__file__))
+app = Flask(
+    __name__,
+    template_folder=os.path.join(base_dir, "templates"),
+    static_folder=os.path.join(base_dir, "static")
+)
 app.config.from_object(Config)
 
 # Ensure database is initialized at start

@@ -34,6 +34,19 @@ def get_active_db_type():
         
     return _cached_db_type
 
+def ensure_sqlite_ready():
+    """Ensure SQLite database is ready in serverless environments like Vercel."""
+    if os.environ.get("VERCEL"):
+        if not os.path.exists(Config.SQLITE_PATH):
+            if os.path.exists(Config.BUNDLED_DB):
+                import shutil
+                try:
+                    shutil.copyfile(Config.BUNDLED_DB, Config.SQLITE_PATH)
+                    return
+                except Exception as e:
+                    print(f"Error copying bundled db: {e}")
+            init_sqlite(force_recreate=True)
+
 class DatabaseManager:
     def __init__(self):
         self.db_type = get_active_db_type()
@@ -62,6 +75,7 @@ class DatabaseManager:
                 autocommit=True
             )
         else:
+            ensure_sqlite_ready()
             conn = sqlite3.connect(Config.SQLITE_PATH)
             conn.execute("PRAGMA foreign_keys = ON;")
             conn.row_factory = sqlite3.Row
@@ -116,7 +130,10 @@ db = DatabaseManager()
 def init_database(force_recreate=False):
     db_type = get_active_db_type()
     if db_type == "SQLITE":
-        init_sqlite(force_recreate)
+        if os.environ.get("VERCEL") and not force_recreate:
+            ensure_sqlite_ready()
+        else:
+            init_sqlite(force_recreate)
     else:
         init_mysql()
 
